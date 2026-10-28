@@ -1,8 +1,16 @@
 import { NestFactory } from '@nestjs/core';
+import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module.js';
+import { configureApp } from './app.setup.js';
+import type { EnvironmentVariables } from './config/env.validation.js';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  await app.listen(process.env.PORT ?? 3000);
+  const app = await NestFactory.create(AppModule, {
+    routeConflictPolicy: { duplicate: 'error', shadow: 'warn' },
+  });
+  configureApp(app);
+  const config =
+    app.get<ConfigService<EnvironmentVariables, true>>(ConfigService);
+  await app.listen(config.get('PORT', { infer: true }));
 }
 await bootstrap();

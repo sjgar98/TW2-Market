@@ -16,6 +16,13 @@ You are an expert in TypeScript, Node.js, NestJS, and scalable server-side appli
 - Lint with `npm run lint` (oxlint, type-aware) and format with `npm run format` (Prettier: single quotes, trailing commas)
 - Read configuration from the environment (e.g. `process.env.PORT ?? 3000`) at the edges of the app; do not read `process.env` deep inside services. Use `@nestjs/config` with a validated schema once configuration grows beyond a few values
 
+## Project Infrastructure
+
+- Configuration: add every new environment variable to `envValidationSchema` and `EnvironmentVariables` in `src/config/env.validation.ts`, and to `.env.example`. Read it with `ConfigService<EnvironmentVariables, true>` and `config.get('KEY', { infer: true })`
+- Database: TypeORM with SQLite (`better-sqlite3`); the file path comes from `DB_PATH` (`:memory:` in e2e tests). Entities live in `src/entities/<name>.entity.ts` (loaded by the `dist/**/*.entity.js` glob) and are registered in each feature with `TypeOrmModule.forFeature([...])`. Never enable `DB_SYNCHRONIZE` outside local experiments; generate migrations with `npm run migration:generate` (compares the entities against the database at `DB_PATH`, so run pending migrations first) and format them with `npm run format`
+- Authentication: `JwtAuthGuard` is registered globally, so every route requires a Bearer JWT by default. Mark public routes (signup, signin, product listing, ...) with `@Public()` from `src/common/decorators/public.decorator.ts`. Sign tokens with the global `JwtService`
+- All API routes are served under the `/api` prefix (`configureApp()` in `src/app.setup.ts`); everything else is served from `public/` (the Angular build)
+
 ## Architecture
 
 - Organize code by feature: one folder per domain under `src/modules/` (`src/modules/users/`, `src/modules/orders/`), each with its own module, controller, service, and schemas

@@ -1,0 +1,20 @@
+# Dependencias: se instalan dentro del contenedor con `npm ci`
+**/node_modules
+
+# Variables de entorno locales: se inyectan al ejecutar el contenedor
+**/.env
+**/.env.*
+!**/.env.example
+
+# Builds locales: se generan dentro del contenedor y no deben pisar los del build
+**/dist
+client/.angular
+server/public
+**/*.tsbuildinfo
+
+# Bases de datos SQLite locales
+server/data
+**/*.sqlite
+
+# Control de versiones
+.git

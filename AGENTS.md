@@ -14,7 +14,7 @@ Si una directiva de plataforma entra en conflicto con este archivo, prevalece la
 
 ## Objetivo del proyecto
 
-Trabajo práctico de taller: una aplicación web de comercio electrónico con gestión de usuarios y de productos. Grupo de 4 alumnos. Repositorio de ejemplo de la cátedra: https://github.com/llarreta/taller
+Trabajo práctico de taller: una aplicación web de comercio electrónico con gestión de usuarios y de productos. Grupo de 7 alumnos. Repositorio de ejemplo de la cátedra: https://github.com/llarreta/taller
 
 ### Requisitos del enunciado
 
@@ -54,14 +54,21 @@ Reglas de negocio explícitas:
 /
 ├── AGENTS.md          ← este archivo
 ├── Dockerfile         ← build multi-etapa: compila client/ y lo copia a /app/public del server
+├── .dockerignore      ← excluye node_modules, .env, builds locales, bases SQLite y .git del contexto de build
 ├── client/            ← Angular 22 (standalone, signals, Vitest). Directivas: client/AGENTS.md
 └── server/            ← NestJS 12 sobre Express 5, ESM, Vitest, oxlint. Directivas: server/AGENTS.md
-    └── src/modules/   ← (convención) un directorio por feature: users, auth, products, cart, ...
+    ├── .env.example   ← variables de entorno (validadas con Joi en src/config/env.validation.ts)
+    └── src/
+        ├── config/    ← esquema Joi del entorno y opciones de ConfigModule
+        ├── db/        ← opciones de TypeORM, datasource del CLI y migrations/
+        ├── entities/  ← entidades TypeORM (*.entity.ts)
+        ├── common/    ← piezas transversales: @Public(), JwtAuthGuard, JwtStrategy
+        └── modules/   ← (convención) un directorio por feature: users, auth, products, cart, ...
 ```
 
 - Node 24 (según el `Dockerfile`).
 - Comandos frontend (desde `client/`): `npm start`, `npm run build`, `npm test`.
-- Comandos backend (desde `server/`): `npm run start:dev`, `npm run build`, `npm test`, `npm run test:e2e`, `npm run lint`, `npm run format`.
+- Comandos backend (desde `server/`): `npm run start:dev`, `npm run build`, `npm test`, `npm run test:e2e`, `npm run lint`, `npm run format`, `npm run migration:generate | migration:create | migration:run | migration:revert | migration:show`.
 
 ## Estado actual
 
@@ -72,7 +79,7 @@ Reglas de negocio explícitas:
 | Funcionalidad | Backend | Frontend | Notas |
 | --- | --- | --- | --- |
 | Signup | ⬜ | ⬜ | Requiere validar complejidad de contraseña y email único. |
-| Signin (JWT) | ⬜ | ⬜ | Emisión de JWT, guard de rutas protegidas e interceptor HTTP en el cliente. |
+| Signin (JWT) | ⬜ | ⬜ | La infraestructura JWT ya existe (ver tabla siguiente); falta el endpoint que emite el token e interceptor HTTP en el cliente. |
 | Recupero de contraseña (opcional) | ⬜ | ⬜ | Sin definir el mecanismo (token por email, etc.). |
 | Visualización de productos | ⬜ | ⬜ | Listado (paginado) y detalle. |
 | Agregar producto al carrito | ⬜ | ⬜ | Disponible desde la vista del producto. |
@@ -84,15 +91,15 @@ Reglas de negocio explícitas:
 | Pieza | Estado | Notas |
 | --- | --- | --- |
 | Proyecto Angular | 🟨 | Recién generado con el CLI: `app.routes.ts` vacío y `app.html` con la plantilla por defecto de Angular. Sin componentes, servicios ni estilos propios. |
-| Proyecto NestJS | 🟨 | Recién generado con el CLI: solo `AppController` / `AppService` de ejemplo ("Hello World!"). Sin módulos de feature. |
-| Base de datos y ORM | ⬜ | **Sin decidir.** No hay motor de base de datos ni ORM instalado. |
-| Configuración por entorno | ⬜ | No hay `@nestjs/config` ni archivos `.env`. El puerto se lee de `process.env.PORT` (por defecto 3000). |
+| Proyecto NestJS | ✅ | Arquitectura global configurada (config, TypeORM, JWT, serve-static, prefijo `/api`, security headers). Se quitaron `AppController` / `AppService` de ejemplo. Sin módulos de feature. |
+| Base de datos y ORM | ✅ | TypeORM 1.x + SQLite (`better-sqlite3`), archivo en `DB_PATH` (por defecto `server/data/tw2market.sqlite`; en Docker `/app/data`, que conviene montar como volumen para no perder datos). Migraciones en `src/db/migrations/` (se ejecutan al iniciar si `DB_MIGRATIONS_RUN=true`). Sin entidades ni migraciones todavía. |
+| Configuración por entorno | ✅ | `@nestjs/config` global + Joi. La app no arranca si falta una variable requerida (hoy solo `JWT_SECRET`). Plantilla en `server/.env.example`. |
 | Validación global (backend) | ⬜ | No hay pipe de validación global registrado. |
-| Autenticación (JWT, guards) | ⬜ | No hay dependencias de JWT instaladas. |
-| Comunicación client ↔ server | ⬜ | El cliente no tiene `provideHttpClient`, ni proxy de desarrollo, ni prefijo `/api` definido. |
-| Servir el frontend desde el backend | 🟨 | El `Dockerfile` copia el build del cliente a `/app/public`, pero el servidor no sirve archivos estáticos. Además, Angular genera el build en `dist/tw2-market/browser`, por lo que la ruta copiada probablemente quede anidada. Revisar al implementar. |
-| Tests | 🟨 | Solo existen los tests de ejemplo generados por los CLIs. |
-| Control de versiones | ⬜ | La rama `main` no tiene commits todavía. |
+| Autenticación (JWT, guards) | ✅ | `@nestjs/jwt` global, `JwtStrategy` (passport-jwt, Bearer) y `JwtAuthGuard` como `APP_GUARD`: **toda ruta exige JWT salvo las marcadas con `@Public()`**. `JwtStrategy.validate` devuelve el payload tal cual; el feature de auth debe tiparlo. |
+| Comunicación client ↔ server | 🟨 | Backend: prefijo global `/api`, sin CORS (mismo origen en producción). Cliente: falta `provideHttpClient` y proxy de desarrollo hacia `/api`. |
+| Servir el frontend desde el backend | 🟨 | `@nestjs/serve-static` sirve `server/public` (= `/app/public` en Docker) con fallback a `index.html`; `/api/*` queda excluido (404 JSON). La ruta del `Dockerfile` es correcta. El `.dockerignore` de la raíz excluye `node_modules`, `.env`, builds locales, bases SQLite y `.git` del contexto. La CSP de `useSecurityHeaders()` puede requerir ajustes cuando exista el frontend real. |
+| Tests | 🟨 | Backend: unit del esquema de entorno y e2e del guard JWT / exclusión de `/api` (SQLite en memoria, no requiere configurar una DB). Frontend: solo los tests de ejemplo del CLI. |
+| Control de versiones | ✅ | Rama `main` con el commit inicial de scaffolding. |
 
 ### Mocks activos
 
@@ -102,7 +109,6 @@ Lista de todo lo que hoy está simulado y debe reemplazarse por una implementaci
 
 ### Decisiones pendientes
 
-- Motor de base de datos y ORM / librería de acceso a datos.
 - Persistencia del carrito: en el servidor, asociado al usuario (recomendado), o solo en el cliente.
 - Política exacta de complejidad de contraseña (largo mínimo, mayúsculas, números, símbolos). Debe ser la misma en frontend y backend.
 - Roles: si la carga de productos queda restringida a un administrador.
@@ -113,6 +119,8 @@ Lista de todo lo que hoy está simulado y debe reemplazarse por una implementaci
 - Features del backend en `server/src/modules/<feature>/` (ver `server/AGENTS.md`).
 - Autenticación con JWT; contraseñas hasheadas.
 - Capas estrictas en backend: controller → service → repository.
+- Base de datos: SQLite (`better-sqlite3`) con TypeORM y migraciones (sin `synchronize` por defecto): no requiere un servidor de base de datos, lo que simplifica el desarrollo y el despliegue del TP.
+- Autenticación con Passport (`passport-jwt`) y guard global con opt-out mediante `@Public()`.
 
 ## Mantenimiento de este archivo
 
