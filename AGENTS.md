@@ -55,6 +55,7 @@ Reglas de negocio explícitas:
 ├── AGENTS.md          ← este archivo
 ├── Dockerfile         ← build multi-etapa: compila client/ y lo copia a /app/public del server
 ├── .dockerignore      ← excluye node_modules, .env, builds locales, bases SQLite y .git del contexto de build
+├── .github/workflows/ci.yml ← CI: tests y build de client/ y server/ en cada pull request (y push a main)
 ├── client/            ← Angular 22 (standalone, signals, Vitest). Directivas: client/AGENTS.md
 └── server/            ← NestJS 12 sobre Express 5, ESM, Vitest, oxlint. Directivas: server/AGENTS.md
     ├── .env.example   ← variables de entorno (validadas con Joi en src/config/env.validation.ts)
@@ -100,6 +101,7 @@ Reglas de negocio explícitas:
 | Servir el frontend desde el backend | 🟨 | `@nestjs/serve-static` sirve `server/public` (= `/app/public` en Docker) con fallback a `index.html`; `/api/*` queda excluido (404 JSON). La ruta del `Dockerfile` es correcta. El `.dockerignore` de la raíz excluye `node_modules`, `.env`, builds locales, bases SQLite y `.git` del contexto. La CSP de `useSecurityHeaders()` puede requerir ajustes cuando exista el frontend real. |
 | Tests | 🟨 | Backend: unit del esquema de entorno y e2e del guard JWT / exclusión de `/api` (SQLite en memoria, no requiere configurar una DB). Frontend: solo los tests de ejemplo del CLI. |
 | Control de versiones | ✅ | Rama `main` con el commit inicial de scaffolding. |
+| CI (GitHub Actions) | 🟨 | `.github/workflows/ci.yml`: en cada PR (y push a `main`) corre, en jobs paralelos con Node 24, `npm ci` + tests + build del cliente, y `npm ci` + lint + tests unit + e2e + build del servidor. Los comandos se verificaron localmente; falta confirmar la primera ejecución en GitHub. |
 
 ### Mocks activos
 
