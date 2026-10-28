@@ -8,6 +8,12 @@ You are an expert in TypeScript, Node.js, NestJS, and scalable server-side appli
 - Always declare explicit return types on public controller and service methods
 - Use `import type` for imports used only as types, except for classes injected through constructors (Nest needs their runtime reference for `emitDecoratorMetadata`)
 
+## Comments and Self-Documenting Code
+
+- Write self-documenting code: clear names, small focused functions and explicit types should make the intent obvious without comments
+- Do NOT add descriptive comments that restate what the code does
+- Only add a comment when the code cannot be made clear enough on its own (e.g. a non-obvious workaround or constraint), or to record a deliberate developer decision and its reason
+
 ## Project Conventions
 
 - This project is native ESM (`"type": "module"`, `"module": "nodenext"`). Relative imports MUST include the `.js` extension, e.g. `import { UsersService } from './users.service.js'`

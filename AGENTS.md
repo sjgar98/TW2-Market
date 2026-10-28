@@ -68,6 +68,7 @@ Reglas de negocio explícitas:
 ```
 
 - Node 24 (según el `Dockerfile`).
+- UI del cliente: Angular Material (+ CDK), tema M3 en `client/src/styles.scss` (agregado con `ng add`; fuentes Roboto y Material Symbols desde Google Fonts en `index.html`), y Bootstrap 5 (CSS y `bootstrap.bundle` con Popper, cargados desde `angular.json`; el CSS de Bootstrap va antes de `styles.scss`).
 - Comandos frontend (desde `client/`): `npm start`, `npm run build`, `npm test`.
 - Comandos backend (desde `server/`): `npm run start:dev`, `npm run build`, `npm test`, `npm run test:e2e`, `npm run lint`, `npm run format`, `npm run migration:generate | migration:create | migration:run | migration:revert | migration:show`.
 
@@ -91,14 +92,14 @@ Reglas de negocio explícitas:
 
 | Pieza | Estado | Notas |
 | --- | --- | --- |
-| Proyecto Angular | 🟨 | Recién generado con el CLI: `app.routes.ts` vacío y `app.html` con la plantilla por defecto de Angular. Sin componentes, servicios ni estilos propios. |
+| Proyecto Angular | 🟨 | Generado con el CLI: `app.routes.ts` vacío y `app.html` con la plantilla por defecto de Angular. Angular Material y Bootstrap instalados y configurados (sin usarse aún). Sin componentes ni servicios propios. |
 | Proyecto NestJS | ✅ | Arquitectura global configurada (config, TypeORM, JWT, serve-static, prefijo `/api`, security headers). Se quitaron `AppController` / `AppService` de ejemplo. Sin módulos de feature. |
 | Base de datos y ORM | ✅ | TypeORM 1.x + SQLite (`better-sqlite3`), archivo en `DB_PATH` (por defecto `server/data/tw2market.sqlite`; en Docker `/app/data`, que conviene montar como volumen para no perder datos). Migraciones en `src/db/migrations/` (se ejecutan al iniciar si `DB_MIGRATIONS_RUN=true`). Sin entidades ni migraciones todavía. |
 | Configuración por entorno | ✅ | `@nestjs/config` global + Joi. La app no arranca si falta una variable requerida (hoy solo `JWT_SECRET`). Plantilla en `server/.env.example`. |
 | Validación global (backend) | ⬜ | No hay pipe de validación global registrado. |
 | Autenticación (JWT, guards) | ✅ | `@nestjs/jwt` global, `JwtStrategy` (passport-jwt, Bearer) y `JwtAuthGuard` como `APP_GUARD`: **toda ruta exige JWT salvo las marcadas con `@Public()`**. `JwtStrategy.validate` devuelve el payload tal cual; el feature de auth debe tiparlo. |
 | Comunicación client ↔ server | 🟨 | Backend: prefijo global `/api`, sin CORS (mismo origen en producción). Cliente: falta `provideHttpClient` y proxy de desarrollo hacia `/api`. |
-| Servir el frontend desde el backend | 🟨 | `@nestjs/serve-static` sirve `server/public` (= `/app/public` en Docker) con fallback a `index.html`; `/api/*` queda excluido (404 JSON). La ruta del `Dockerfile` es correcta. El `.dockerignore` de la raíz excluye `node_modules`, `.env`, builds locales, bases SQLite y `.git` del contexto. La CSP de `useSecurityHeaders()` puede requerir ajustes cuando exista el frontend real. |
+| Servir el frontend desde el backend | 🟨 | `@nestjs/serve-static` sirve `server/public` (= `/app/public` en Docker) con fallback a `index.html`; `/api/*` queda excluido (404 JSON). La ruta del `Dockerfile` es correcta. El `.dockerignore` de la raíz excluye `node_modules`, `.env`, builds locales, bases SQLite y `.git` del contexto. La CSP de `useSecurityHeaders()` puede requerir ajustes cuando exista el frontend real (por ejemplo, para permitir Google Fonts, que usa el tema de Material). |
 | Tests | 🟨 | Backend: unit del esquema de entorno y e2e del guard JWT / exclusión de `/api` (SQLite en memoria, no requiere configurar una DB). Frontend: solo los tests de ejemplo del CLI. |
 | Control de versiones | ✅ | Rama `main` con el commit inicial de scaffolding. |
 | CI (GitHub Actions) | 🟨 | `.github/workflows/ci.yml`: en cada PR (y push a `main`) corre, en jobs paralelos con Node 24, `npm ci` + tests + build del cliente, y `npm ci` + lint + tests unit + e2e + build del servidor. Los comandos se verificaron localmente; falta confirmar la primera ejecución en GitHub. |
@@ -123,6 +124,7 @@ Lista de todo lo que hoy está simulado y debe reemplazarse por una implementaci
 - Capas estrictas en backend: controller → service → repository.
 - Base de datos: SQLite (`better-sqlite3`) con TypeORM y migraciones (sin `synchronize` por defecto): no requiere un servidor de base de datos, lo que simplifica el desarrollo y el despliegue del TP.
 - Autenticación con Passport (`passport-jwt`) y guard global con opt-out mediante `@Public()`.
+- UI del cliente con Angular Material (componentes) y Bootstrap (grilla y utilidades de layout).
 
 ## Mantenimiento de este archivo
 

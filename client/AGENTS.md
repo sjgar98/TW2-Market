@@ -6,6 +6,12 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 - Prefer type inference when the type is obvious
 - Avoid the `any` type; use `unknown` when type is uncertain
 
+## Comments and Self-Documenting Code
+
+- Write self-documenting code: clear names, small focused functions and explicit types should make the intent obvious without comments
+- Do NOT add descriptive comments that restate what the code does
+- Only add a comment when the code cannot be made clear enough on its own (e.g. a non-obvious workaround or constraint), or to record a deliberate developer decision and its reason
+
 ## Angular Best Practices
 
 - Always use standalone components over NgModules
