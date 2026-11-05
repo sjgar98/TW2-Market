@@ -53,6 +53,7 @@ Reglas de negocio explícitas:
 ```
 /
 ├── AGENTS.md          ← este archivo
+├── docs/              ← ENUNCIADO.md (transcripción del PDF) y PROTOTIPOS.md (pantallas, flujos y reglas de UX, imágenes en prototipos/)
 ├── Dockerfile         ← build multi-etapa: compila client/ y lo copia a /app/public del server
 ├── .dockerignore      ← excluye node_modules, .env, builds locales, bases SQLite y .git del contexto de build
 ├── .github/workflows/ci.yml ← CI: tests y build de client/ y server/ en cada pull request (y push a main)
@@ -80,13 +81,13 @@ Reglas de negocio explícitas:
 
 | Funcionalidad | Backend | Frontend | Notas |
 | --- | --- | --- | --- |
-| Signup | ⬜ | ⬜ | Requiere validar complejidad de contraseña y email único. |
+| Signup | ⬜ | ⬜ | Requiere validar complejidad de contraseña (política en Decisiones tomadas) y email único. |
 | Signin (JWT) | ⬜ | ⬜ | La infraestructura JWT ya existe (ver tabla siguiente); falta el endpoint que emite el token e interceptor HTTP en el cliente. |
-| Recupero de contraseña (opcional) | ⬜ | ⬜ | Sin definir el mecanismo (token por email, etc.). |
-| Visualización de productos | ⬜ | ⬜ | Listado (paginado) y detalle. |
-| Agregar producto al carrito | ⬜ | ⬜ | Disponible desde la vista del producto. |
-| Ver pedido / carrito | ⬜ | ⬜ | Detalle de los productos del pedido. |
-| Carga de nuevo producto (opcional) | ⬜ | ⬜ | Definir quién puede cargar productos (¿rol admin?). |
+| ~~Recupero de contraseña (opcional)~~ | — | — | **Descartado**, no se implementa (ver Decisiones tomadas). No debe existir link, ruta ni endpoint. |
+| Visualización de productos | ⬜ | ⬜ | Listado (paginado, filtros en query params) y detalle, públicos. Muestran el stock y "Sin stock". |
+| Agregar producto al carrito | ⬜ | ⬜ | Disponible desde la vista del producto. Requiere sesión y respeta el stock. |
+| Ver pedido / carrito | ⬜ | ⬜ | Detalle de los productos del pedido, confirmación (pago simulado, descuento de stock, pantalla de pedido confirmado). |
+| Carga de nuevo producto (opcional) | ⬜ | ⬜ | Solo admin (rol simulado). Incluye stock. |
 
 ### Infraestructura y piezas transversales
 
@@ -112,12 +113,12 @@ Lista de todo lo que hoy está simulado y debe reemplazarse por una implementaci
 
 ### Decisiones pendientes
 
-- Persistencia del carrito: en el servidor, asociado al usuario (recomendado), o solo en el cliente.
-- Política exacta de complejidad de contraseña (largo mínimo, mayúsculas, números, símbolos). Debe ser la misma en frontend y backend.
-- Roles: si la carga de productos queda restringida a un administrador.
-- Mecanismo de recupero de contraseña (si se implementa).
+- _(ninguna por el momento)_
 
 ### Decisiones tomadas
+
+- **Política de contraseña:** al menos 8 caracteres, una mayúscula, una minúscula, un número y un símbolo. Es la misma regla en frontend (checklist en vivo) y backend (fuente de verdad).
+- **Recupero de contraseña descartado:** es opcional, y sin envío real de emails quedaría como un botón que no hace nada, lo que la cátedra pide evitar. No hay link, ruta ni endpoint.
 
 - Features del backend en `server/src/modules/<feature>/` (ver `server/AGENTS.md`).
 - Autenticación con JWT; contraseñas hasheadas.
@@ -125,6 +126,13 @@ Lista de todo lo que hoy está simulado y debe reemplazarse por una implementaci
 - Base de datos: SQLite (`better-sqlite3`) con TypeORM y migraciones (sin `synchronize` por defecto): no requiere un servidor de base de datos, lo que simplifica el desarrollo y el despliegue del TP.
 - Autenticación con Passport (`passport-jwt`) y guard global con opt-out mediante `@Public()`.
 - UI del cliente con Angular Material (componentes) y Bootstrap (grilla y utilidades de layout).
+- Los flujos entre pantallas y las reglas de UX están en [`docs/PROTOTIPOS.md`](docs/PROTOTIPOS.md#flujos-y-reglas-transversales), y prevalecen sobre las imágenes. La cátedra pide coherencia entre funcionalidades sin ampliar el alcance.
+- **Roles simulados** `customer` / `admin`: el signup crea `customer` y el admin se carga por seed. Solo el admin carga productos (403 en el backend). El enunciado separa comprar de cargar productos, y la cátedra aclara que alcanza con simularlo.
+- **Carrito en el servidor, asociado al usuario.** El catálogo es público y agregar al carrito requiere sesión. Así hay un solo modelo, sin fusionar carritos anónimos.
+- **Stock simple:** campo `stock` en el producto, el carrito no supera el stock, y al confirmar se valida y descuenta en una transacción (409 si falta). La cátedra pide evitar compras de más unidades que las disponibles.
+- **Pedido:** guarda el precio de cada ítem al confirmar, el pago es simulado (siempre aprobado), se vacía el carrito y se muestra una pantalla de confirmación con la dirección del usuario. La operación tiene que tener un resultado visible.
+- **Fuera de alcance**, porque el enunciado no lo pide: historial de pedidos, edición y baja de productos, gestión de roles y permisos avanzados.
+- Productos de ejemplo y usuario admin precargados por migración, para que la app se pueda usar desde el primer arranque.
 
 ## Mantenimiento de este archivo
 
