@@ -2,9 +2,8 @@ import { Injectable, type ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import type { Observable } from 'rxjs';
-import { Public } from '../decorators/public.decorator.js';
+import { Public } from '../../../common/decorators/public.decorator.js';
 
-// Registrado globalmente (APP_GUARD): toda ruta exige JWT salvo las marcadas con @Public()
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
   constructor(private readonly reflector: Reflector) {

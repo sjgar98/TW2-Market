@@ -1,13 +1,15 @@
 import { Controller, Get, type INestApplication } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Test, type TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
 import request from 'supertest';
 import type { App } from 'supertest/types.js';
+import type { Repository } from 'typeorm';
 import { AppModule } from './../src/app.module.js';
 import { configureApp } from './../src/app.setup.js';
 import { Public } from './../src/common/decorators/public.decorator.js';
+import { Usuario } from './../src/entities/usuario.entity.js';
 
-// Controller de prueba: la app todavía no tiene feature modules con rutas propias
 @Controller('e2e')
 class E2eController {
   @Public()
@@ -60,7 +62,16 @@ describe('App (e2e)', () => {
   });
 
   it('allows protected routes with a valid token', async () => {
-    const token = await jwtService.signAsync({ sub: 'user-id' });
+    const usuario = await app
+      .get<Repository<Usuario>>(getRepositoryToken(Usuario))
+      .save({
+        email: 'e2e@test.com',
+        passwordHash: 'hash',
+        nombre: 'E2E',
+        apellido: 'Test',
+        direccion: 'Calle 1',
+      });
+    const token = await jwtService.signAsync({ sub: usuario.id });
 
     return request(app.getHttpServer())
       .get('/api/e2e/protected')

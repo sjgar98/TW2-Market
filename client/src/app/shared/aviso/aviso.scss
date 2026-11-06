@@ -1,0 +1,15 @@
+:host {
+  font: var(--mat-sys-body-medium);
+}
+:host(.aviso-info) {
+  background-color: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+}
+:host(.aviso-error) {
+  background-color: var(--mat-sys-error-container);
+  color: var(--mat-sys-on-error-container);
+}
+:host(.aviso-exito) {
+  background-color: #d6f5dd;
+  color: #0d3b1a;
+}

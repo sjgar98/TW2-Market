@@ -1,0 +1,121 @@
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-10 col-lg-8">
+      <mat-card appearance="outlined">
+        <mat-card-content class="d-flex flex-column gap-3 pt-3">
+          <h1 class="fs-4 fw-normal m-0">Crear cuenta</h1>
+
+          <form [formRoot]="formulario" class="row gx-3 gy-2">
+            <mat-form-field class="col-12 col-md-6">
+              <mat-label>Nombre</mat-label>
+              <input matInput autocomplete="given-name" [formField]="formulario.nombre" />
+              @if (formulario.nombre().errors()[0]; as error) {
+                <mat-error>{{ error.message }}</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field class="col-12 col-md-6">
+              <mat-label>Apellido</mat-label>
+              <input matInput autocomplete="family-name" [formField]="formulario.apellido" />
+              @if (formulario.apellido().errors()[0]; as error) {
+                <mat-error>{{ error.message }}</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field class="col-12">
+              <mat-label>Email</mat-label>
+              <input matInput type="email" autocomplete="email" [formField]="formulario.email" />
+              @if (formulario.email().errors()[0]; as error) {
+                <mat-error>{{ error.message }}</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field class="col-12">
+              <mat-label>Dirección</mat-label>
+              <input matInput autocomplete="street-address" [formField]="formulario.direccion" />
+              <mat-hint>Se usa como dirección de envío de los pedidos</mat-hint>
+              @if (formulario.direccion().errors()[0]; as error) {
+                <mat-error>{{ error.message }}</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field class="col-12 col-md-6">
+              <mat-label>Contraseña</mat-label>
+              <input
+                matInput
+                [type]="mostrarPassword() ? 'text' : 'password'"
+                autocomplete="new-password"
+                aria-describedby="reglas-password"
+                [formField]="formulario.password"
+              />
+              <button
+                mat-icon-button
+                matSuffix
+                type="button"
+                aria-label="Mostrar contraseña"
+                [attr.aria-pressed]="mostrarPassword()"
+                (click)="mostrarPassword.update((visible) => !visible)"
+              >
+                <mat-icon aria-hidden="true">{{
+                  mostrarPassword() ? 'visibility_off' : 'visibility'
+                }}</mat-icon>
+              </button>
+              @if (formulario.password().errors()[0]; as error) {
+                <mat-error>{{ error.message }}</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field class="col-12 col-md-6">
+              <mat-label>Repetir contraseña</mat-label>
+              <input
+                matInput
+                [type]="mostrarPassword() ? 'text' : 'password'"
+                autocomplete="new-password"
+                [formField]="formulario.repeatPassword"
+              />
+              @if (formulario.repeatPassword().errors()[0]; as error) {
+                <mat-error>{{ error.message }}</mat-error>
+              }
+            </mat-form-field>
+
+            <ul
+              id="reglas-password"
+              class="col-12 list-unstyled d-flex flex-column gap-1 mb-2"
+              aria-label="Requisitos de la contraseña"
+            >
+              @for (regla of reglasPassword(); track regla.etiqueta) {
+                <li class="d-flex align-items-center gap-2" [class.regla-cumplida]="regla.cumplida">
+                  <mat-icon aria-hidden="true">{{
+                    regla.cumplida ? 'check_circle' : 'radio_button_unchecked'
+                  }}</mat-icon>
+                  <span>
+                    {{ regla.etiqueta }}
+                    <span class="visually-hidden">{{
+                      regla.cumplida ? '(cumplido)' : '(pendiente)'
+                    }}</span>
+                  </span>
+                </li>
+              }
+            </ul>
+
+            <div class="col-12">
+              <button
+                mat-flat-button
+                type="submit"
+                class="w-100"
+                [disabled]="formulario().invalid() || formulario().submitting()"
+              >
+                Crear cuenta
+              </button>
+            </div>
+          </form>
+
+          <p class="d-flex justify-content-center align-items-center gap-1 m-0">
+            ¿Ya tenés cuenta?
+            <a mat-button routerLink="/ingresar">Ingresá</a>
+          </p>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

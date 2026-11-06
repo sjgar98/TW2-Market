@@ -1,25 +1,26 @@
 import { join } from 'node:path';
-import { Module } from '@nestjs/common';
-import { APP_GUARD } from '@nestjs/core';
+import { Module, ValidationPipe } from '@nestjs/common';
+import { APP_PIPE } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule, type JwtSignOptions } from '@nestjs/jwt';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { JwtAuthGuard } from './common/guards/jwt-auth.guard.js';
-import { JwtStrategy } from './common/strategies/jwt.strategy.js';
 import {
   configModuleOptions,
   type EnvironmentVariables,
 } from './config/env.validation.js';
 import { getDataSourceOptions } from './db/database.config.js';
+import { AuthModule } from './modules/auth/auth.module.js';
 
 @Module({
   imports: [
     ConfigModule.forRoot(configModuleOptions),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: (config: ConfigService<EnvironmentVariables, true>) =>
-        getDataSourceOptions(config),
+      useFactory: (config: ConfigService<EnvironmentVariables, true>) => ({
+        ...getDataSourceOptions(config),
+        autoLoadEntities: true,
+      }),
     }),
     JwtModule.registerAsync({
       global: true,
@@ -33,13 +34,21 @@ import { getDataSourceOptions } from './db/database.config.js';
         },
       }),
     }),
-    // Sirve el build de Angular (copiado a /public por el Dockerfile). Las rutas
-    // /api quedan excluidas para que un endpoint inexistente devuelva 404 y no index.html
     ServeStaticModule.forRoot({
       rootPath: join(import.meta.dirname, '..', 'public'),
       exclude: ['/api/{*splat}'],
     }),
+    AuthModule,
   ],
-  providers: [JwtStrategy, { provide: APP_GUARD, useClass: JwtAuthGuard }],
+  providers: [
+    {
+      provide: APP_PIPE,
+      useValue: new ValidationPipe({
+        whitelist: true,
+        forbidNonWhitelisted: true,
+        transform: true,
+      }),
+    },
+  ],
 })
 export class AppModule {}
