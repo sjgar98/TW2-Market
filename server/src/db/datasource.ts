@@ -7,8 +7,6 @@ import {
 } from '../config/env.validation.js';
 import { getDataSourceOptions } from './database.config.js';
 
-// Punto de entrada del CLI de TypeORM (migraciones). La aplicación Nest no lo
-// importa: usa getDataSourceOptions() desde TypeOrmModule.forRootAsync().
 const context = await NestFactory.createApplicationContext(
   ConfigModule.forRoot({ ...configModuleOptions, isGlobal: false }),
   { logger: ['error'] },

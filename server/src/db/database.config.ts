@@ -12,7 +12,6 @@ export function getDataSourceOptions(
     logging: config.get('DB_LOGGING', { infer: true }),
     synchronize: config.get('DB_SYNCHRONIZE', { infer: true }),
     migrationsRun: config.get('DB_MIGRATIONS_RUN', { infer: true }),
-    // Rutas relativas al código compilado (dist/), no al directorio de trabajo
     entities: [join(import.meta.dirname, '..', '**', '*.entity.js')],
     migrations: [join(import.meta.dirname, 'migrations', '*.js')],
     migrationsTableName: 'migrations',

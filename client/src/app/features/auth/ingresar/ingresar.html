@@ -1,0 +1,72 @@
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-12 col-sm-10 col-md-7 col-lg-5">
+      <mat-card appearance="outlined">
+        <mat-card-content class="d-flex flex-column gap-3 pt-3">
+          <h1 class="fs-4 fw-normal m-0">Ingresar</h1>
+
+          @if (cuentaCreada()) {
+            <app-aviso tipo="exito"
+              >Tu cuenta fue creada. Ingresá con tu email y contraseña.</app-aviso
+            >
+          } @else if (motivo() === 'carrito') {
+            <app-aviso tipo="info">Ingresá para agregar productos al carrito.</app-aviso>
+          }
+
+          @for (error of formulario().errors(); track error.kind) {
+            <app-aviso tipo="error">{{ error.message }}</app-aviso>
+          }
+
+          <form [formRoot]="formulario" class="d-flex flex-column gap-2">
+            <mat-form-field>
+              <mat-label>Email</mat-label>
+              <input matInput type="email" autocomplete="email" [formField]="formulario.email" />
+              @if (formulario.email().errors()[0]; as error) {
+                <mat-error>{{ error.message }}</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field>
+              <mat-label>Contraseña</mat-label>
+              <input
+                matInput
+                [type]="mostrarPassword() ? 'text' : 'password'"
+                autocomplete="current-password"
+                [formField]="formulario.password"
+              />
+              <button
+                mat-icon-button
+                matSuffix
+                type="button"
+                aria-label="Mostrar contraseña"
+                [attr.aria-pressed]="mostrarPassword()"
+                (click)="mostrarPassword.update((visible) => !visible)"
+              >
+                <mat-icon aria-hidden="true">{{
+                  mostrarPassword() ? 'visibility_off' : 'visibility'
+                }}</mat-icon>
+              </button>
+              @if (formulario.password().errors()[0]; as error) {
+                <mat-error>{{ error.message }}</mat-error>
+              }
+            </mat-form-field>
+
+            <button
+              mat-flat-button
+              type="submit"
+              class="w-100"
+              [disabled]="formulario().invalid() || formulario().submitting()"
+            >
+              Ingresar
+            </button>
+          </form>
+
+          <p class="d-flex justify-content-center align-items-center gap-1 m-0">
+            ¿No tenés cuenta?
+            <a mat-button routerLink="/registro">Registrate</a>
+          </p>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

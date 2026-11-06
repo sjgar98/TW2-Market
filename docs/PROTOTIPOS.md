@@ -105,8 +105,8 @@ Muestra el número de pedido, los ítems con el precio pagado, el total, la dire
 Respuesta a las aclaraciones de la cátedra: las funcionalidades del enunciado deben ser coherentes entre sí, sin agregar alcance.
 
 **Perfiles (simulados).**
-- Hay dos roles: `customer` y `admin`.
-- El signup siempre crea `customer`. El admin se precarga con una migración (seed).
+- El rol se simula con el flag booleano `isAdmin` del usuario.
+- El signup siempre crea usuarios con `isAdmin = false`. El admin se precarga con una migración (seed).
 - "Cargar producto" solo se muestra y se habilita para el admin, con un guard de ruta en el cliente y 403 en el backend.
 - No hay gestión de roles ni permisos avanzados.
 

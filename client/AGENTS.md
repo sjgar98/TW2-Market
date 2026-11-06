@@ -23,6 +23,11 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 - Use `NgOptimizedImage` for all static images.
   - `NgOptimizedImage` does not work for inline base64 images.
 
+## Naming and Scaffolding
+
+- Follow the Angular 22 naming convention, the same one the CLI generates: no type suffix for components, directives and services (`header.ts` / `class Header`, `sesion.ts` / `class Sesion`), and a hyphenated suffix for guards, interceptors, pipes and resolvers (`solo-invitados-guard.ts`, `auth-interceptor.ts`). Do NOT use `.component.ts`, `.service.ts`, `Component` / `Service` class suffixes, or dotted suffixes such as `.guard.ts`
+- Scaffold new pieces with the CLI (`ng g component`, `ng g service`, `ng g guard --functional`, `ng g interceptor`, ...) so names and layout stay consistent
+
 ## Accessibility Requirements
 
 - It MUST pass all AXE checks.
@@ -35,12 +40,12 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 - Use `model()` for two-way bound properties with `[(prop)]` syntax instead of pairing `input()` with `output()`
 - Use `computed()` for derived state
 - Use `linkedSignal()` for state derived from multiple reactive sources that must stay synchronized
-- Prefer inline templates for small components
 - Prefer Signal Forms (`@angular/forms/signals`) for new forms. They are stable in Angular v22+ and provide signal-based state, type-safe field access, and schema-based validation
 - When not using Signal Forms, prefer Reactive forms instead of Template-driven ones
 - Do NOT use `ngClass`, use `class` bindings instead
 - Do NOT use `ngStyle`, use `style` bindings instead
 - Do NOT import `CommonModule`, import only the directives and pipes the template uses, such as `AsyncPipe` or `DatePipe`
+- ALWAYS put the template and the styles in their own files next to the component: `<name>.html` (`templateUrl`) and `<name>.scss` (`styleUrl`). NEVER use `template` or `styles` inside the TypeScript file, not even for small components
 - When using external templates/styles, use paths relative to the component TS file.
 
 ## State Management

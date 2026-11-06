@@ -26,7 +26,7 @@ You are an expert in TypeScript, Node.js, NestJS, and scalable server-side appli
 
 - Configuration: add every new environment variable to `envValidationSchema` and `EnvironmentVariables` in `src/config/env.validation.ts`, and to `.env.example`. Read it with `ConfigService<EnvironmentVariables, true>` and `config.get('KEY', { infer: true })`
 - Database: TypeORM with SQLite (`better-sqlite3`); the file path comes from `DB_PATH` (`:memory:` in e2e tests). Entities live in `src/entities/<name>.entity.ts` (loaded by the `dist/**/*.entity.js` glob) and are registered in each feature with `TypeOrmModule.forFeature([...])`. Never enable `DB_SYNCHRONIZE` outside local experiments; generate migrations with `npm run migration:generate` (compares the entities against the database at `DB_PATH`, so run pending migrations first) and format them with `npm run format`
-- Authentication: `JwtAuthGuard` is registered globally, so every route requires a Bearer JWT by default. Mark public routes (signup, signin, product listing, ...) with `@Public()` from `src/common/decorators/public.decorator.ts`. Sign tokens with the global `JwtService`
+- Authentication: the `auth` module (`src/modules/auth/`) registers `JwtAuthGuard` globally, so every route requires a Bearer JWT by default. `JwtStrategy` loads the user and puts it (without `passwordHash`) in `request.user`; read it with `@UsuarioActual()` from `src/common/decorators/usuario-actual.decorator.ts`. Restrict admin-only routes with `@UseGuards(AdminGuard)` (`src/modules/auth/guards/admin.guard.ts`, 403 unless `isAdmin`). Mark public routes (signup, signin, product listing, ...) with `@Public()` from `src/common/decorators/public.decorator.ts`. Sign tokens with the global `JwtService`
 - All API routes are served under the `/api` prefix (`configureApp()` in `src/app.setup.ts`); everything else is served from `public/` (the Angular build)
 
 ## Architecture
@@ -53,13 +53,13 @@ You are an expert in TypeScript, Node.js, NestJS, and scalable server-side appli
 ## Validation
 
 - Validate ALL external input: bodies, params, queries, and headers
-- Prefer Standard Schema validation (built in since NestJS v12) for new code. Attach a schema (Zod, Valibot, ArkType, ...) directly to the parameter decorator and register `StandardSchemaValidationPipe` globally:
+- Validate with DTO classes decorated with `class-validator` (and `class-transformer` for normalization such as `@Transform` trim), declared in `<feature>.dto.ts` inside the feature folder (e.g. `src/modules/auth/auth.dto.ts`):
   ```ts
   @Post()
-  create(@Body({ schema: createUserSchema }) dto: CreateUserDto): Promise<User> { ... }
+  create(@Body() dto: CreateUserDto): Promise<User> { ... }
   ```
-- Derive DTO types from the schema (e.g. `type CreateUserDto = z.infer<typeof createUserSchema>`) instead of declaring them twice
-- If using `class-validator` with `ValidationPipe` instead, always set `whitelist: true`, `forbidNonWhitelisted: true`, and `transform: true`
+- `ValidationPipe` is registered globally as `APP_PIPE` in `AppModule` with `whitelist: true`, `forbidNonWhitelisted: true`, and `transform: true`; keep those options
+- Import DTO classes as values (not `import type`) in controllers, so `emitDecoratorMetadata` exposes them to the pipe
 - Do NOT trust the shape of incoming data inside services; services receive already validated, typed input
 
 ## Providers and Dependency Injection

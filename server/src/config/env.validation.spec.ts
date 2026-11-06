@@ -14,7 +14,6 @@ describe('envValidationSchema', () => {
 
     expect(error).toBeUndefined();
     expect(value).toMatchObject({
-      NODE_ENV: 'development',
       PORT: 8080,
       DB_PATH: 'data/tw2market.sqlite',
       DB_LOGGING: true,

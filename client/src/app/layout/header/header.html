@@ -1,0 +1,21 @@
+<header>
+  <mat-toolbar class="border-bottom gap-2">
+    <a
+      routerLink="/productos"
+      class="d-flex align-items-center gap-2 text-reset text-decoration-none"
+    >
+      <mat-icon aria-hidden="true">storefront</mat-icon>
+      <span>TW2 Market</span>
+    </a>
+    <span class="flex-grow-1"></span>
+    @if (sesion.usuario(); as usuario) {
+      <span class="d-none d-sm-flex align-items-center gap-1 fs-6 fw-medium">
+        <mat-icon aria-hidden="true">account_circle</mat-icon>
+        {{ usuario.nombre }} {{ usuario.apellido }}
+      </span>
+      <button mat-stroked-button type="button" (click)="salir()">Salir</button>
+    } @else {
+      <a mat-stroked-button routerLink="/ingresar">Ingresar</a>
+    }
+  </mat-toolbar>
+</header>
