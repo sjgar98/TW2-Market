@@ -17,9 +17,7 @@ export const routes: Routes = [
   },
   {
     path: 'productos',
-    title: 'Productos | TW2 Market',
-    loadComponent: () =>
-      import('./features/productos/productos-placeholder').then((m) => m.ProductosPlaceholder),
+    loadChildren: () => import('./features/productos/productos.route').then((m) => m.PRODUCTOS_ROUTES),
   },
   { path: '**', redirectTo: 'productos' },
 ];

@@ -1,0 +1,23 @@
+.productos-hero {
+  background: linear-gradient(135deg, #1d1d1f, #3b3b42);
+}
+
+.producto-imagen {
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+}
+
+.producto-card {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.12) !important;
+  }
+}
+
+.producto-specs {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
