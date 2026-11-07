@@ -1,0 +1,127 @@
+<section class="container py-4 py-md-5">
+  @if (cargando()) {
+    <p class="text-center text-muted py-5">Cargando producto...</p>
+  } @else if (error() || !producto()) {
+    <div class="text-center py-5">
+      <p class="text-danger">No encontramos este producto.</p>
+      <a routerLink="/productos" class="btn btn-outline-primary">Volver al listado</a>
+    </div>
+  } @else {
+    <a routerLink="/productos" class="volver-productos">
+      <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>
+      Volver a productos
+    </a>
+
+    <div class="row g-4 g-lg-5 detalle-producto">
+      <div class="col-12 col-md-5">
+        <div class="producto-imagen-contenedor">
+          <img
+            [src]="producto()!.imagenUrl"
+            [alt]="producto()!.nombre"
+            class="producto-imagen"
+          />
+        </div>
+      </div>
+
+      <div class="col-12 col-md-7">
+        <div class="producto-informacion">
+          <span class="producto-categoria">
+            {{ producto()!.marca }} · {{ producto()!.clasificacion }}
+          </span>
+
+          <h1 class="producto-nombre">{{ producto()!.nombre }}</h1>
+
+          <p class="producto-precio">
+            {{ producto()!.precio | currency }}
+          </p>
+
+          @if (producto()!.disponible) {
+            <div class="producto-stock disponible">
+              <span class="material-symbols-outlined" aria-hidden="true">check_circle</span>
+              En stock · {{ producto()!.stock }} unidades disponibles
+            </div>
+          } @else {
+            <div class="producto-stock agotado">
+              <span class="material-symbols-outlined" aria-hidden="true">cancel</span>
+              Sin stock por el momento
+            </div>
+          }
+
+          <p class="producto-descripcion">
+            {{ producto()!.descripcion }}
+          </p>
+
+          <div class="producto-acciones">
+            <button
+              type="button"
+              class="btn btn-primary"
+              [disabled]="!producto()!.disponible"
+            >
+              Agregar al carrito
+            </button>
+
+            <button
+              type="button"
+              class="btn btn-outline-primary"
+              [disabled]="!producto()!.disponible"
+            >
+              Comprar ahora
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <section class="especificaciones">
+      <div class="especificaciones-encabezado">
+        <span class="material-symbols-outlined" aria-hidden="true">tune</span>
+        <div>
+          <h2>Especificaciones técnicas</h2>
+          <p>Conocé las características de este equipo.</p>
+        </div>
+      </div>
+
+      <dl class="especificaciones-lista">
+        <div class="especificacion">
+          <dt>
+            <span class="material-symbols-outlined" aria-hidden="true">smartphone</span>
+            Pantalla
+          </dt>
+          <dd>{{ producto()!.pantalla }}</dd>
+        </div>
+
+        <div class="especificacion">
+          <dt>
+            <span class="material-symbols-outlined" aria-hidden="true">storage</span>
+            Almacenamiento
+          </dt>
+          <dd>{{ producto()!.almacenamientoGb }} GB</dd>
+        </div>
+
+        <div class="especificacion">
+          <dt>
+            <span class="material-symbols-outlined" aria-hidden="true">memory</span>
+            Memoria RAM
+          </dt>
+          <dd>{{ producto()!.ramGb }} GB</dd>
+        </div>
+
+        <div class="especificacion">
+          <dt>
+            <span class="material-symbols-outlined" aria-hidden="true">battery_full</span>
+            Batería
+          </dt>
+          <dd>{{ producto()!.bateriaMah }} mAh</dd>
+        </div>
+
+        <div class="especificacion">
+          <dt>
+            <span class="material-symbols-outlined" aria-hidden="true">photo_camera</span>
+            Cámara
+          </dt>
+          <dd>{{ producto()!.camara }}</dd>
+        </div>
+      </dl>
+    </section>
+  }
+</section>

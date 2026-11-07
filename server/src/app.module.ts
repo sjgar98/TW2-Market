@@ -11,6 +11,7 @@ import {
 } from './config/env.validation.js';
 import { getDataSourceOptions } from './db/database.config.js';
 import { AuthModule } from './modules/auth/auth.module.js';
+import { ProductosModule } from './modules/productos/productos.module.js';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { AuthModule } from './modules/auth/auth.module.js';
       exclude: ['/api/{*splat}'],
     }),
     AuthModule,
+    ProductosModule,
   ],
   providers: [
     {
