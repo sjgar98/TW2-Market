@@ -7,8 +7,18 @@
       <mat-icon aria-hidden="true">storefront</mat-icon>
       <span>TW2 Market</span>
     </a>
+    <a mat-button routerLink="/productos">Productos</a>
     <span class="flex-grow-1"></span>
     @if (sesion.usuario(); as usuario) {
+      <a
+        mat-icon-button
+        routerLink="/carrito"
+        aria-label="Carrito"
+        [matBadge]="carrito.unidades()"
+        [matBadgeHidden]="carrito.unidades() === 0"
+      >
+        <mat-icon>shopping_cart</mat-icon>
+      </a>
       <span class="d-none d-sm-flex align-items-center gap-1 fs-6 fw-medium">
         <mat-icon aria-hidden="true">account_circle</mat-icon>
         {{ usuario.nombre }} {{ usuario.apellido }}

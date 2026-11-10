@@ -1,0 +1,144 @@
+<div class="container py-4">
+  <h1 class="fs-3 fw-normal mb-4">Mi pedido</h1>
+
+  @if (cargando()) {
+    <p class="text-secondary">Cargando...</p>
+  } @else if (error()) {
+    <p class="text-danger">No se pudo cargar el carrito.</p>
+  } @else if (items().length === 0) {
+    <div class="text-center py-5">
+      <mat-icon aria-hidden="true" class="fs-1 mb-2">remove_shopping_cart</mat-icon>
+      <p>Tu carrito está vacío.</p>
+      <a matButton="filled" routerLink="/productos">Ver productos</a>
+    </div>
+  } @else {
+    <div class="row g-3">
+      <div class="col-12 col-lg-8">
+        <div class="d-none d-md-block border rounded overflow-hidden">
+          <table class="table align-middle mb-0">
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th class="text-end">Precio</th>
+                <th class="text-center">Cantidad</th>
+                <th class="text-end">Subtotal</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of items(); track item.productoId) {
+                <tr>
+                  <td>
+                    <a [routerLink]="['/productos', item.productoId]">{{ item.nombre }}</a>
+                    <div class="small text-secondary">{{ item.clasificacion }}</div>
+                  </td>
+                  <td class="text-end">{{ formatearPrecio(item.precio) }}</td>
+                  <td class="text-center text-nowrap">
+                    <button
+                      matIconButton
+                      type="button"
+                      aria-label="Restar una unidad"
+                      [disabled]="item.cantidad <= 1"
+                      (click)="cambiarCantidad(item, item.cantidad - 1)"
+                    >
+                      <mat-icon>remove</mat-icon>
+                    </button>
+                    {{ item.cantidad }}
+                    <button
+                      matIconButton
+                      type="button"
+                      aria-label="Sumar una unidad"
+                      [disabled]="item.cantidad >= item.stock"
+                      (click)="cambiarCantidad(item, item.cantidad + 1)"
+                    >
+                      <mat-icon>add</mat-icon>
+                    </button>
+                    @if (item.cantidad >= item.stock) {
+                      <span class="small text-secondary">Máx.</span>
+                    }
+                  </td>
+                  <td class="text-end fw-bold">{{ formatearPrecio(item.cantidad * item.precio) }}</td>
+                  <td class="text-end">
+                    <button matIconButton type="button" aria-label="Quitar del carrito" (click)="quitar(item)">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <div class="d-md-none d-flex flex-column gap-3">
+          @for (item of items(); track item.productoId) {
+            <div class="border rounded p-3">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <a [routerLink]="['/productos', item.productoId]">{{ item.nombre }}</a>
+                  <div class="small text-secondary">
+                    {{ item.clasificacion }} · {{ formatearPrecio(item.precio) }} c/u
+                  </div>
+                </div>
+                <button matIconButton type="button" aria-label="Quitar del carrito" (click)="quitar(item)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <button
+                    matIconButton
+                    type="button"
+                    aria-label="Restar una unidad"
+                    [disabled]="item.cantidad <= 1"
+                    (click)="cambiarCantidad(item, item.cantidad - 1)"
+                  >
+                    <mat-icon>remove</mat-icon>
+                  </button>
+                  {{ item.cantidad }}
+                  <button
+                    matIconButton
+                    type="button"
+                    aria-label="Sumar una unidad"
+                    [disabled]="item.cantidad >= item.stock"
+                    (click)="cambiarCantidad(item, item.cantidad + 1)"
+                  >
+                    <mat-icon>add</mat-icon>
+                  </button>
+                  @if (item.cantidad >= item.stock) {
+                    <span class="small text-secondary">Máx.</span>
+                  }
+                </div>
+                <span class="fw-bold">{{ formatearPrecio(item.cantidad * item.precio) }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-4">
+        <div class="border rounded p-3 d-flex flex-column gap-2">
+          <h2 class="fs-5 fw-normal">Resumen</h2>
+          <div class="d-flex justify-content-between">
+            <span>Productos</span>
+            <span>{{ unidades() }}</span>
+          </div>
+          <hr class="my-1" />
+          <div class="d-flex justify-content-between fs-4">
+            <span>Total</span>
+            <span>{{ formatearPrecio(total()) }}</span>
+          </div>
+          <div class="d-flex align-items-center gap-2 small">
+            <mat-icon aria-hidden="true">local_shipping</mat-icon>
+            Envío a: {{ carrito()!.direccionEnvio }}
+          </div>
+          <div class="d-flex align-items-center gap-2 small">
+            <mat-icon aria-hidden="true">credit_card</mat-icon>
+            El pago es simulado: se aprueba al confirmar.
+          </div>
+          <button matButton="filled" type="button" disabled>Confirmar pedido</button>
+          <a matButton routerLink="/productos">Seguir comprando</a>
+        </div>
+      </div>
+    </div>
+  }
+</div>

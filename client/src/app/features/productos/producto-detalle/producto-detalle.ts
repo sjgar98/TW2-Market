@@ -56,10 +56,13 @@ export class ProductoDetalle {
       return;
     }
     this.carritoApi.agregar(producto.id, this.cantidad()).subscribe({
-      next: (item) =>
-        this.snackBar.open(`Agregado al carrito: ${producto.nombre} (${item.cantidad})`, 'Cerrar', {
-          duration: 4000,
-        }),
+            next: (item) =>
+        this.snackBar
+          .open(`Agregado al carrito: ${producto.nombre} (${item.cantidad})`, 'Ver carrito', {
+            duration: 5000,
+          })
+          .onAction()
+          .subscribe(() => this.router.navigateByUrl('/carrito')),
       error: (e) =>
         this.snackBar.open(
           e.status === 409 ? 'No hay stock suficiente para esa cantidad' : 'No se pudo agregar al carrito',

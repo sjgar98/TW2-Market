@@ -34,4 +34,8 @@ export class CarritoRepository {
       order: { producto: { nombre: 'ASC' } },
     });
   }
+
+    eliminar(item: ItemCarrito): Promise<ItemCarrito> {
+    return this.itemCarritoRepository.remove(item);
+  }
 }
