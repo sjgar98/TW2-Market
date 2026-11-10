@@ -52,10 +52,22 @@
           </p>
 
           <div class="producto-acciones">
+                        <input
+              type="number"
+              class="form-control"
+              style="width: 5rem"
+              min="1"
+              [max]="producto()!.stock"
+              [value]="cantidad()"
+              [disabled]="!producto()!.disponible"
+              (change)="cambiarCantidad($any($event.target).value)"
+            />
+
             <button
               type="button"
               class="btn btn-primary"
               [disabled]="!producto()!.disponible"
+              (click)="agregarAlCarrito()"
             >
               Agregar al carrito
             </button>
