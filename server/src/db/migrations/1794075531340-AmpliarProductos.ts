@@ -1,8 +1,8 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class AmpliarProductos1700000000000 implements MigrationInterface {
-  name = 'AmpliarProductos1700000000000';
-
+export class AmpliarProductos1794075531340 implements MigrationInterface {
+  name = 'AmpliarProductos1794075531340';
+  
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
       ALTER TABLE productos ADD COLUMN marca varchar(80) NOT NULL DEFAULT '';

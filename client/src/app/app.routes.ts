@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { requiereSesionGuard } from './core/auth/requiere-sesion-guard';
 import { soloInvitadosGuard } from './core/auth/solo-invitados-guard';
 
 export const routes: Routes = [
@@ -18,6 +19,12 @@ export const routes: Routes = [
   {
     path: 'productos',
     loadChildren: () => import('./features/productos/productos.route').then((m) => m.PRODUCTOS_ROUTES),
+  },
+  {
+    path: 'carrito',
+    title: 'Mi pedido | TW2 Market',
+    canActivate: [requiereSesionGuard],
+    loadComponent: () => import('./features/carrito/carrito').then((m) => m.Carrito),
   },
   { path: '**', redirectTo: 'productos' },
 ];
