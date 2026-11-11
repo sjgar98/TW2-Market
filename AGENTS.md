@@ -18,7 +18,7 @@ Si una directiva de plataforma entra en conflicto con este archivo, prevalece la
 
 ## Objetivo del proyecto
 
-Trabajo práctico de taller: una aplicación web de comercio electrónico con gestión de usuarios y de productos. Grupo de 7 alumnos. Repositorio de ejemplo de la cátedra: https://github.com/llarreta/taller
+Trabajo práctico de taller: una aplicación web de comercio electrónico con gestión de usuarios y de productos. Grupo de 6 alumnos. Repositorio de ejemplo de la cátedra: https://github.com/llarreta/taller
 
 Rubro elegido: venta de celulares.
 
