@@ -13,6 +13,7 @@ import { getDataSourceOptions } from './db/database.config.js';
 import { AuthModule } from './modules/auth/auth.module.js';
 import { ProductosModule } from './modules/productos/productos.module.js';
 import { CarritoModule } from './modules/carrito/carrito.module.js';
+import { PedidosModule } from './modules/pedidos/pedidos.module.js';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { CarritoModule } from './modules/carrito/carrito.module.js';
     AuthModule,
     ProductosModule,
     CarritoModule,
+    PedidosModule,
   ],
   providers: [
     {
