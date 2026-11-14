@@ -8,10 +8,9 @@ import { formatearPrecio } from '../../core/formato-precio';
 import { CarritoApi } from '../../core/carrito/carrito-api';
 import { Carrito as CarritoDatos, ItemCarrito } from '../../core/carrito/carrito-models';
 import { PedidosApi } from '../../core/pedidos/pedidos-api';
-import { ProductoSinStock } from '../../core/pedidos/pedido-models';
 
-function esRespuestaSinStock(cuerpo: unknown): cuerpo is { productos: ProductoSinStock[] } {
-  return typeof cuerpo === 'object' && cuerpo !== null && 'productos' in cuerpo && Array.isArray(cuerpo.productos);
+function excedeStock(item: ItemCarrito): boolean {
+  return item.cantidad > item.stock;
 }
 
 @Component({
@@ -29,12 +28,16 @@ export class Carrito {
   readonly cargando = signal(true);
   readonly error = signal(false);
   readonly confirmando = signal(false);
-  readonly sinStock = signal<ProductoSinStock[]>([]);
 
   readonly items = computed(() => this.carrito()?.items ?? []);
   readonly unidades = computed(() => this.items().reduce((suma, i) => suma + i.cantidad, 0));
-  readonly total = computed(() => this.items().reduce((suma, i) => suma + i.cantidad * i.precio, 0));
-  readonly puedeConfirmar = computed(() => !this.confirmando() && this.sinStock().length === 0);
+  readonly total = computed(() =>
+    this.items().reduce((suma, i) => suma + i.cantidad * i.precio, 0),
+  );
+  readonly itemsSinStock = computed(() => this.items().filter(excedeStock));
+  readonly puedeConfirmar = computed(
+    () => !this.confirmando() && this.itemsSinStock().length === 0,
+  );
 
   constructor() {
     this.cargar();
@@ -44,27 +47,22 @@ export class Carrito {
     return formatearPrecio(precio);
   }
 
-  faltante(item: ItemCarrito): ProductoSinStock | undefined {
-    return this.sinStock().find((producto) => producto.productoId === item.productoId);
+  excedeStock(item: ItemCarrito): boolean {
+    return excedeStock(item);
   }
 
   cambiarCantidad(item: ItemCarrito, cantidad: number): void {
-    if (cantidad < 1 || cantidad > item.stock) return;
+    const aumenta = cantidad > item.cantidad;
+    if (cantidad < 1 || (aumenta && cantidad > item.stock)) return;
     this.carritoApi.cambiarCantidad(item.productoId, cantidad).subscribe({
-      next: () => {
-        this.sinStock.set([]);
-        this.cargar();
-      },
+      next: () => this.cargar(),
       error: () => this.avisar('No se pudo cambiar la cantidad'),
     });
   }
 
   quitar(item: ItemCarrito): void {
     this.carritoApi.quitar(item.productoId).subscribe({
-      next: () => {
-        this.sinStock.set([]);
-        this.cargar();
-      },
+      next: () => this.cargar(),
       error: () => this.avisar('No se pudo quitar el producto'),
     });
   }
@@ -80,7 +78,6 @@ export class Carrito {
       error: (error: HttpErrorResponse) => {
         this.confirmando.set(false);
         if (error.status === 409) {
-          this.sinStock.set(this.leerProductosSinStock(error));
           this.cargar();
           this.avisar('Hay productos sin stock suficiente. Ajustá las cantidades para confirmar.');
           return;
@@ -88,11 +85,6 @@ export class Carrito {
         this.avisar('No se pudo confirmar el pedido');
       },
     });
-  }
-
-  private leerProductosSinStock(error: HttpErrorResponse): ProductoSinStock[] {
-    const cuerpo: unknown = error.error;
-    return esRespuestaSinStock(cuerpo) ? cuerpo.productos : [];
   }
 
   private cargar(): void {

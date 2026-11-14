@@ -14,9 +14,3 @@ export interface Pedido {
   estadoPago: 'aprobado';
   items: ItemPedido[];
 }
-
-export interface ProductoSinStock {
-  productoId: string;
-  nombre: string;
-  stockDisponible: number;
-}

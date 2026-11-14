@@ -1,4 +1,8 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CarritoRepository } from './carrito.repository.js';
 import { AgregarItemDto } from './dto/agregar-item.dto.js';
 import { CarritoRespuestaDto } from './dto/carrito-respuesta.dto.js';
@@ -7,18 +11,30 @@ import { CarritoRespuestaDto } from './dto/carrito-respuesta.dto.js';
 export class CarritoService {
   constructor(private readonly carritoRepository: CarritoRepository) {}
 
-  async listar(usuarioId: string, direccionEnvio: string): Promise<CarritoRespuestaDto> {
+  async listar(
+    usuarioId: string,
+    direccionEnvio: string,
+  ): Promise<CarritoRespuestaDto> {
     const items = await this.carritoRepository.findByUsuarioId(usuarioId);
     return new CarritoRespuestaDto(items, direccionEnvio);
   }
 
-  async agregar(usuarioId: string, dto: AgregarItemDto): Promise<{ productoId: string; cantidad: number }> {
-    const producto = await this.carritoRepository.findProductoById(dto.productoId);
+  async agregar(
+    usuarioId: string,
+    dto: AgregarItemDto,
+  ): Promise<{ productoId: string; cantidad: number }> {
+    const producto = await this.carritoRepository.findProductoById(
+      dto.productoId,
+    );
     if (!producto) throw new NotFoundException('Producto no encontrado');
 
-    const item = await this.carritoRepository.findByUsuarioIdAndProductoId(usuarioId, dto.productoId);
+    const item = await this.carritoRepository.findByUsuarioIdAndProductoId(
+      usuarioId,
+      dto.productoId,
+    );
     const total = (item?.cantidad ?? 0) + dto.cantidad;
-    if (total > producto.stock) throw new ConflictException('No hay stock suficiente');
+    if (total > producto.stock)
+      throw new ConflictException('No hay stock suficiente');
 
     if (item) {
       item.cantidad = total;
@@ -38,11 +54,16 @@ export class CarritoService {
     productoId: string,
     cantidad: number,
   ): Promise<{ productoId: string; cantidad: number }> {
-    const item = await this.carritoRepository.findByUsuarioIdAndProductoId(usuarioId, productoId);
+    const item = await this.carritoRepository.findByUsuarioIdAndProductoId(
+      usuarioId,
+      productoId,
+    );
     if (!item) throw new NotFoundException('El producto no está en el carrito');
 
     const producto = await this.carritoRepository.findProductoById(productoId);
-    if (!producto || cantidad > producto.stock) throw new ConflictException('No hay stock suficiente');
+    const aumenta = cantidad > item.cantidad;
+    if (!producto || (aumenta && cantidad > producto.stock))
+      throw new ConflictException('No hay stock suficiente');
 
     item.cantidad = cantidad;
     await this.carritoRepository.guardar(item);
@@ -50,7 +71,10 @@ export class CarritoService {
   }
 
   async quitar(usuarioId: string, productoId: string): Promise<void> {
-    const item = await this.carritoRepository.findByUsuarioIdAndProductoId(usuarioId, productoId);
+    const item = await this.carritoRepository.findByUsuarioIdAndProductoId(
+      usuarioId,
+      productoId,
+    );
     if (!item) throw new NotFoundException('El producto no está en el carrito');
     await this.carritoRepository.eliminar(item);
   }
