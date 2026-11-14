@@ -1,0 +1,60 @@
+<div class="container py-4">
+  @if (cargando()) {
+    <p class="text-secondary">Cargando pedido...</p>
+  } @else if (error() || !pedido()) {
+    <div class="text-center py-5">
+      <p class="text-danger">No encontramos este pedido.</p>
+      <a matButton="filled" routerLink="/productos">Volver a productos</a>
+    </div>
+  } @else {
+    <div class="text-center py-4">
+      <mat-icon aria-hidden="true" class="fs-1 text-success mb-2">check_circle</mat-icon>
+      <h1 class="fs-3 fw-normal">¡Gracias por tu compra!</h1>
+      <p class="mb-1">
+        Número de pedido: <span class="fw-bold">#{{ numero() }}</span>
+      </p>
+      <p class="text-secondary">El pago (simulado) fue aprobado.</p>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-12 col-lg-8">
+        <div class="border rounded overflow-hidden">
+          <table class="table align-middle mb-0">
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th class="text-end">Precio</th>
+                <th class="text-center">Cantidad</th>
+                <th class="text-end">Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of pedido()!.items; track item.productoId) {
+                <tr>
+                  <td>{{ item.nombre }}</td>
+                  <td class="text-end">{{ formatearPrecio(item.precioUnitario) }}</td>
+                  <td class="text-center">{{ item.cantidad }}</td>
+                  <td class="text-end fw-bold">{{ formatearPrecio(item.subtotal) }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mt-3">
+          <div class="d-flex align-items-center gap-2">
+            <mat-icon aria-hidden="true">local_shipping</mat-icon>
+            Envío a: {{ pedido()!.direccionEnvio }}
+          </div>
+          <div class="fs-4">
+            Total: <span class="fw-bold">{{ formatearPrecio(pedido()!.total) }}</span>
+          </div>
+        </div>
+
+        <div class="text-center mt-4">
+          <a matButton="filled" routerLink="/productos">Volver a productos</a>
+        </div>
+      </div>
+    </div>
+  }
+</div>

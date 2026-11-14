@@ -27,7 +27,7 @@
             </thead>
             <tbody>
               @for (item of items(); track item.productoId) {
-                <tr>
+                <tr [class.table-danger]="excedeStock(item)">
                   <td>
                     <a [routerLink]="['/productos', item.productoId]">{{ item.nombre }}</a>
                     <div class="small text-secondary">{{ item.clasificacion }}</div>
@@ -56,10 +56,22 @@
                     @if (item.cantidad >= item.stock) {
                       <span class="small text-secondary">Máx.</span>
                     }
+                    @if (excedeStock(item)) {
+                      <div class="small text-danger">
+                        Stock insuficiente: quedan {{ item.stock }}
+                      </div>
+                    }
                   </td>
-                  <td class="text-end fw-bold">{{ formatearPrecio(item.cantidad * item.precio) }}</td>
+                  <td class="text-end fw-bold">
+                    {{ formatearPrecio(item.cantidad * item.precio) }}
+                  </td>
                   <td class="text-end">
-                    <button matIconButton type="button" aria-label="Quitar del carrito" (click)="quitar(item)">
+                    <button
+                      matIconButton
+                      type="button"
+                      aria-label="Quitar del carrito"
+                      (click)="quitar(item)"
+                    >
                       <mat-icon>delete</mat-icon>
                     </button>
                   </td>
@@ -71,7 +83,7 @@
 
         <div class="d-md-none d-flex flex-column gap-3">
           @for (item of items(); track item.productoId) {
-            <div class="border rounded p-3">
+            <div class="border rounded p-3" [class.border-danger]="excedeStock(item)">
               <div class="d-flex justify-content-between align-items-start">
                 <div>
                   <a [routerLink]="['/productos', item.productoId]">{{ item.nombre }}</a>
@@ -79,7 +91,12 @@
                     {{ item.clasificacion }} · {{ formatearPrecio(item.precio) }} c/u
                   </div>
                 </div>
-                <button matIconButton type="button" aria-label="Quitar del carrito" (click)="quitar(item)">
+                <button
+                  matIconButton
+                  type="button"
+                  aria-label="Quitar del carrito"
+                  (click)="quitar(item)"
+                >
                   <mat-icon>delete</mat-icon>
                 </button>
               </div>
@@ -106,6 +123,9 @@
                   </button>
                   @if (item.cantidad >= item.stock) {
                     <span class="small text-secondary">Máx.</span>
+                  }
+                  @if (excedeStock(item)) {
+                    <div class="small text-danger">Stock insuficiente: quedan {{ item.stock }}</div>
                   }
                 </div>
                 <span class="fw-bold">{{ formatearPrecio(item.cantidad * item.precio) }}</span>
@@ -135,7 +155,19 @@
             <mat-icon aria-hidden="true">credit_card</mat-icon>
             El pago es simulado: se aprueba al confirmar.
           </div>
-          <button matButton="filled" type="button" disabled>Confirmar pedido</button>
+          @if (itemsSinStock().length > 0) {
+            <p class="small text-danger mb-0" role="alert">
+              Hay productos sin stock suficiente. Ajustá las cantidades marcadas para confirmar.
+            </p>
+          }
+          <button
+            matButton="filled"
+            type="button"
+            [disabled]="!puedeConfirmar()"
+            (click)="confirmar()"
+          >
+            {{ confirmando() ? 'Confirmando...' : 'Confirmar pedido' }}
+          </button>
           <a matButton routerLink="/productos">Seguir comprando</a>
         </div>
       </div>

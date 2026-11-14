@@ -159,6 +159,6 @@ Respuesta a las aclaraciones de la cátedra: las funcionalidades del enunciado d
 | Detalle | `GET /api/products/:id` (público, 404 si no existe) |
 | Clasificaciones | `GET /api/classifications` (público) |
 | Carrito | `GET /api/cart`, `POST /api/cart/items`, `PATCH` / `DELETE /api/cart/items/:productId` (con sesión; 409 si se supera el stock) |
-| Confirmar pedido | `POST /api/orders` (con sesión; 409 si falta stock) |
-| Pedido confirmado | `GET /api/orders/:id` (solo el dueño del pedido) |
+| Confirmar pedido | `POST /api/pedidos` (con sesión; 409 si falta stock) |
+| Pedido confirmado | `GET /api/pedidos/:id` (solo el dueño del pedido) |
 | Cargar producto | `POST /api/products` (solo admin, 403 si no) |

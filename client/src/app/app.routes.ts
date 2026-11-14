@@ -26,5 +26,12 @@ export const routes: Routes = [
     canActivate: [requiereSesionGuard],
     loadComponent: () => import('./features/carrito/carrito').then((m) => m.Carrito),
   },
+  {
+    path: 'pedidos/:id/confirmacion',
+    title: 'Pedido confirmado | TW2 Market',
+    canActivate: [requiereSesionGuard],
+    loadComponent: () =>
+      import('./features/pedidos/pedido-confirmado/pedido-confirmado').then((m) => m.PedidoConfirmado),
+  },
   { path: '**', redirectTo: 'productos' },
 ];
