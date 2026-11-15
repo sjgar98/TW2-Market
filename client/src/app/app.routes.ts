@@ -33,5 +33,9 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/pedidos/pedido-confirmado/pedido-confirmado').then((m) => m.PedidoConfirmado),
   },
-  { path: '**', redirectTo: 'productos' },
+  {
+    path: '**',
+    title: 'Página no encontrada | TW2 Market',
+    loadComponent: () => import('./features/no-encontrado/no-encontrado').then((m) => m.NoEncontrado),
+  },
 ];
