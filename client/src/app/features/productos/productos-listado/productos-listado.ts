@@ -1,12 +1,12 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { CurrencyPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ProductosApi } from '../../../core/productos/productos-api';
 import { Producto } from '../../../core/productos/producto';
+import { formatearPrecio } from '../../../core/formato-precio';
 
 @Component({
   selector: 'app-productos-listado',
-  imports: [RouterLink, CurrencyPipe],
+  imports: [RouterLink],
   templateUrl: './productos-listado.html',
   styleUrl: './productos-listado.scss',
 })
@@ -18,6 +18,7 @@ export class ProductosListado {
   readonly error = signal(false);
   readonly busqueda = signal('');
   readonly clasificacionSeleccionada = signal<string | null>(null);
+  readonly formatearPrecio = formatearPrecio;
 
   readonly clasificaciones = computed(() =>
     [...new Set(this.productos().map((p) => p.clasificacion))].sort(),
