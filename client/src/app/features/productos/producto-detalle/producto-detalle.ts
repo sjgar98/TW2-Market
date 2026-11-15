@@ -1,15 +1,15 @@
 import { Component, inject, signal } from '@angular/core';
-import { CurrencyPipe } from '@angular/common';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CarritoApi } from '../../../core/carrito/carrito-api';
 import { Sesion } from '../../../core/auth/sesion';
 import { ProductosApi } from '../../../core/productos/productos-api';
 import { Producto } from '../../../core/productos/producto';
+import { formatearPrecio } from '../../../core/formato-precio';
 
 @Component({
   selector: 'app-producto-detalle',
-  imports: [RouterLink, CurrencyPipe],
+  imports: [RouterLink],
   templateUrl: './producto-detalle.html',
   styleUrl: './producto-detalle.scss',
 })
@@ -20,7 +20,7 @@ export class ProductoDetalle {
   private readonly sesion = inject(Sesion);
   private readonly router = inject(Router);
   private readonly snackBar = inject(MatSnackBar);
-
+  readonly formatearPrecio = formatearPrecio;
   readonly producto = signal<Producto | null>(null);
   readonly cargando = signal(true);
   readonly error = signal(false);

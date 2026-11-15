@@ -28,7 +28,7 @@
         <h1 class="producto-nombre">{{ producto()!.nombre }}</h1>
 
         <p class="producto-precio">
-          {{ producto()!.precio | currency }}
+          {{ formatearPrecio(producto()!.precio) }}
         </p>
 
         @if (producto()!.disponible) {
