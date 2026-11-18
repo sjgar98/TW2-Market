@@ -15,7 +15,7 @@ Diseño de referencia de las pantallas a desarrollar (ver [ENUNCIADO.md](ENUNCIA
 | --- | --- | --- | --- |
 | 1 | Ingresar (signin) | `/ingresar` | Requerido |
 | 2 | Crear cuenta (signup) | `/registro` | Requerido |
-| 3 | ~~Recuperar contraseña~~ | — | Opcional, **descartada** |
+| 3 | Recuperar contraseña | `/recuperar-password` | Opcional (en implementación) |
 | 4 | Listado de productos | `/productos` | Requerido |
 | 5 | Detalle de producto | `/productos/:id` | Requerido |
 | 6 | Mi pedido (carrito) | `/carrito` | Requerido |
@@ -26,7 +26,7 @@ Diseño de referencia de las pantallas a desarrollar (ver [ENUNCIADO.md](ENUNCIA
 
 ### 1. Ingresar
 
-Email y contraseña (con botón para mostrarla) y link a "Registrate". No lleva "¿Olvidaste tu contraseña?" porque el recupero no se implementa (ver pantalla 3). Cuando se llega redirigido desde "Agregar" sin sesión, se muestra el aviso "Ingresá para agregar productos al carrito.":
+Email y contraseña (con botón para mostrarla) y link a "Registrate". El link "¿Olvidaste tu contraseña?" se agrega junto con las pantallas de recupero (parte 3). Cuando se llega redirigido desde "Agregar" sin sesión, se muestra el aviso "Ingresá para agregar productos al carrito.":
 
 ![Ingresar](prototipos/01-ingresar.png)
 
@@ -42,9 +42,9 @@ Reglas de complejidad (confirmadas; las mismas en frontend y backend): al menos 
 
 ![Crear cuenta](prototipos/02-crear-cuenta.png)
 
-### 3. Recuperar contraseña (descartada)
+### 3. Recuperar contraseña (en implementación)
 
-Es opcional en el enunciado y no se implementa. Sin un envío real de emails, el flujo quedaría como un botón que no hace nada, así que no hay pantalla, ruta, endpoint ni link desde Ingresar.
+El backend ya expone la solicitud (parte 1: `POST /api/auth/recuperar-password`, siempre 202, con token de un solo uso y envío por correo). Las pantallas `/recuperar-password` (pedir el enlace) y `/restablecer-password?token=...` (elegir la nueva contraseña) se implementan en la parte 3; hasta entonces no hay link desde Ingresar.
 
 ### 4. Listado de productos
 
@@ -155,6 +155,7 @@ Respuesta a las aclaraciones de la cátedra: las funcionalidades del enunciado d
 | --- | --- |
 | Ingresar | `POST /api/auth/signin` → `{ accessToken }` |
 | Crear cuenta | `POST /api/auth/signup` (409 si el email existe) |
+| Recuperar contraseña | `POST /api/auth/recuperar-password` (público; 202 siempre) |
 | Listado | `GET /api/products?search=&classification=&page=&limit=` (público) |
 | Detalle | `GET /api/products/:id` (público, 404 si no existe) |
 | Clasificaciones | `GET /api/classifications` (público) |

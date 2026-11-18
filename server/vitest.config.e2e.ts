@@ -10,6 +10,8 @@ export default defineConfig({
       DB_PATH: ':memory:',
       DB_SYNCHRONIZE: 'true',
       JWT_SECRET: 'e2e-test-secret-with-at-least-32-chars',
+      APP_URL: 'http://localhost:4200',
+      SMTP_HOST: '',
     },
   },
 });

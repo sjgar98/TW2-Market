@@ -24,6 +24,13 @@ export class SignInDto {
   password: string;
 }
 
+export class RecuperarPasswordDto {
+  @Transform(normalizarEmail)
+  @IsEmail(undefined, { message: 'El email no es válido' })
+  @MaxLength(254)
+  email: string;
+}
+
 export class SignUpDto {
   @Transform(normalizarEmail)
   @IsEmail(undefined, { message: 'El email no es válido' })
