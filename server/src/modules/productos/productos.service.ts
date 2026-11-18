@@ -8,9 +8,21 @@ import { ListarProductosDto } from './dto/listar-productos.dto.js';
 export class ProductosService {
   constructor(private readonly productosRepository: ProductosRepository) {}
 
-  async listar(filtros: ListarProductosDto){
-    const [productos, total] = await this.productosRepository.findPaginado(filtros);
-    return new ListadoPaginadoDto(productos.map((p) => new ProductoRespuestaDto(p)), total, filtros.pagina, filtros.limite);
+  async listar(
+    filtros: ListarProductosDto,
+  ): Promise<ListadoPaginadoDto<ProductoRespuestaDto>> {
+    const [productos, total] =
+      await this.productosRepository.findPaginado(filtros);
+    return new ListadoPaginadoDto(
+      productos.map((p) => new ProductoRespuestaDto(p)),
+      total,
+      filtros.pagina,
+      filtros.limite,
+    );
+  }
+
+  listarMarcas(): Promise<string[]> {
+    return this.productosRepository.findMarcas();
   }
 
   async obtenerPorId(id: string): Promise<ProductoRespuestaDto> {
