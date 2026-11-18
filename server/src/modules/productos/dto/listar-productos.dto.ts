@@ -18,4 +18,20 @@ export class ListarProductosDto {
   @IsOptional()
   @IsString()
   busqueda?: string;
+
+  @IsOptional()
+  @IsString()
+  marca?: string;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  precioMax?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  precioMin?: number;
 }

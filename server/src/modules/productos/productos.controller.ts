@@ -12,7 +12,7 @@ export class ProductosController {
   @Public()
   @Get()
   listar(@Query() query: ListarProductosDto): Promise<ListadoPaginadoDto<ProductoRespuestaDto>> {
-    return this.productosService.listar(query.pagina, query.limite, query.busqueda);
+    return this.productosService.listar(query);
   }
 
   @Public()
