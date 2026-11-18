@@ -15,7 +15,7 @@ Diseño de referencia de las pantallas a desarrollar (ver [ENUNCIADO.md](ENUNCIA
 | --- | --- | --- | --- |
 | 1 | Ingresar (signin) | `/ingresar` | Requerido |
 | 2 | Crear cuenta (signup) | `/registro` | Requerido |
-| 3 | Recuperar contraseña | `/recuperar-password` | Opcional (en implementación) |
+| 3 | Recuperar contraseña | `/recuperar-password` | Opcional (backend completo; frontend en parte 3) |
 | 4 | Listado de productos | `/productos` | Requerido |
 | 5 | Detalle de producto | `/productos/:id` | Requerido |
 | 6 | Mi pedido (carrito) | `/carrito` | Requerido |
@@ -42,9 +42,9 @@ Reglas de complejidad (confirmadas; las mismas en frontend y backend): al menos 
 
 ![Crear cuenta](prototipos/02-crear-cuenta.png)
 
-### 3. Recuperar contraseña (en implementación)
+### 3. Recuperar contraseña (backend completo)
 
-El backend ya expone la solicitud (parte 1: `POST /api/auth/recuperar-password`, siempre 202, con token de un solo uso y envío por correo). Las pantallas `/recuperar-password` (pedir el enlace) y `/restablecer-password?token=...` (elegir la nueva contraseña) se implementan en la parte 3; hasta entonces no hay link desde Ingresar.
+El backend ya permite pedir el enlace y restablecer la contraseña: `POST /api/auth/recuperar-password` (siempre 202, token de un solo uso que vence a los 30 minutos y se envía por correo) y `POST /api/auth/restablecer-password` (valida token y política, actualiza el hash y consume el token). Las pantallas `/recuperar-password` (pedir el enlace) y `/restablecer-password?token=...` (elegir la nueva contraseña) se implementan en la parte 3; hasta entonces no hay link desde Ingresar.
 
 ### 4. Listado de productos
 
@@ -156,6 +156,7 @@ Respuesta a las aclaraciones de la cátedra: las funcionalidades del enunciado d
 | Ingresar | `POST /api/auth/signin` → `{ accessToken }` |
 | Crear cuenta | `POST /api/auth/signup` (409 si el email existe) |
 | Recuperar contraseña | `POST /api/auth/recuperar-password` (público; 202 siempre) |
+| Restablecer contraseña | `POST /api/auth/restablecer-password` (público; token + nueva contraseña) |
 | Listado | `GET /api/products?search=&classification=&page=&limit=` (público) |
 | Detalle | `GET /api/products/:id` (público, 404 si no existe) |
 | Clasificaciones | `GET /api/classifications` (público) |

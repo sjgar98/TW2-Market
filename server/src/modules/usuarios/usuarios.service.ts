@@ -1,15 +1,13 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { hash } from 'bcrypt';
 import { Repository } from 'typeorm';
 import { Usuario } from '../../entities/usuario.entity.js';
+import { hashearPassword } from './password.js';
 
 export type NuevoUsuario = Pick<
   Usuario,
   'email' | 'nombre' | 'apellido' | 'direccion'
 > & { password: string };
-
-const BCRYPT_SALT_ROUNDS = 16;
 
 @Injectable()
 export class UsuariosService {
@@ -33,7 +31,7 @@ export class UsuariosService {
     }
     const usuario = this.usuarioRepository.create({
       email: nuevoUsuario.email,
-      passwordHash: await hash(nuevoUsuario.password, BCRYPT_SALT_ROUNDS),
+      passwordHash: await hashearPassword(nuevoUsuario.password),
       nombre: nuevoUsuario.nombre,
       apellido: nuevoUsuario.apellido,
       direccion: nuevoUsuario.direccion,
