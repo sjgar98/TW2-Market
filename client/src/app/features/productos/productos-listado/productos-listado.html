@@ -1,103 +1,112 @@
 <section class="productos-hero text-white text-center py-5 mb-4">
   <div class="container">
-    <h1 class="fw-bold mb-3" style="font-size: 2rem;">
-      Encontrá tu próximo celular
-    </h1>
+    <h1 class="fw-bold mb-3" style="font-size: 2rem;">Encontrá tu próximo celular</h1>
 
     <p class="mb-4" style="font-size: 1rem; line-height: 1.6;">
       Los mejores equipos de Apple, Samsung, Motorola, Xiaomi y Google,
       con el precio claro desde el primer click.
     </p>
 
-    <div class="mx-auto" style="max-width: 440px;">
-        <input
-        type="search"
-        class="form-control"
-        placeholder="Buscar por nombre, marca o categoría..."
-        [value]="busqueda()"
-        (input)="busqueda.set($any($event.target).value)"
-        aria-label="Buscar productos"
-        />
+    <div class="mx-auto mb-3" style="max-width: 440px;">
+      <input type="search" class="form-control" placeholder="Buscar por nombre..." [value]="busqueda()"
+        (input)="buscar($any($event.target).value)" aria-label="Buscar productos" />
     </div>
 
-    @if (clasificaciones().length > 1) {
-      <div class="d-flex flex-wrap justify-content-center gap-2 mt-3">
-        @for (clasificacion of clasificaciones(); track clasificacion) {
-          <button
-            type="button"
-            class="btn btn-sm"
-            [class.btn-light]="clasificacionSeleccionada() === clasificacion"
-            [class.btn-outline-light]="clasificacionSeleccionada() !== clasificacion"
-            (click)="alternarClasificacion(clasificacion)"
-            [attr.aria-pressed]="clasificacionSeleccionada() === clasificacion"
-          >
-            {{ clasificacion }}
-          </button>
+    <div class="row g-2 justify-content-center mx-auto" style="max-width: 760px;">
+      <div class="col-6 col-md-3">
+        <select class="form-select" [value]="marca()" (change)="filtrarPorMarca($any($event.target).value)"
+          aria-label="Filtrar por marca">
+          <option value="">Todas las marcas</option>
+          @for (m of marcas(); track m) {
+          <option [value]="m">{{ m }}</option>
+          }
+        </select>
+      </div>
+      <div class="col-6 col-md-3">
+        <select class="form-select" (change)="cambiarOrden($any($event.target).value)" aria-label="Ordenar por precio">
+          <option value="">Ordenar por</option>
+          <option value="precio_asc">Menor precio</option>
+          <option value="precio_desc">Mayor precio</option>
+        </select>
+      </div>
+      <div class="col-6 col-md-3">
+        <input type="number" min="0" step="1" class="form-control" [class.is-invalid]="precioMinInvalido()"
+          [attr.aria-invalid]="precioMinInvalido()" [attr.aria-describedby]="precioMinInvalido() ? 'precio-min-error' : null"
+          placeholder="Precio mínimo" (input)="cambiarPrecioMin($any($event.target).value)"
+          aria-label="Precio mínimo" />
+        @if (precioMinInvalido()) {
+        <div id="precio-min-error" class="invalid-feedback d-block text-white">
+          El precio ingresado no puede ser menor a cero.
+        </div>
         }
       </div>
-    }
+      <div class="col-6 col-md-3">
+        <input type="number" min="0" step="1" class="form-control" [class.is-invalid]="precioMaxInvalido()"
+          [attr.aria-invalid]="precioMaxInvalido()" [attr.aria-describedby]="precioMaxInvalido() ? 'precio-max-error' : null"
+          placeholder="Precio máximo" (input)="cambiarPrecioMax($any($event.target).value)"
+          aria-label="Precio máximo" />
+        @if (precioMaxInvalido()) {
+        <div id="precio-max-error" class="invalid-feedback d-block text-white">
+          El precio ingresado no puede ser menor a cero.
+        </div>
+        }
+      </div>
+    </div>
   </div>
 </section>
 
 <section class="container pb-5">
   @if (cargando()) {
-    <p class="text-center text-muted py-5">Cargando productos...</p>
+  <p class="text-center text-muted py-5">Cargando productos...</p>
   } @else if (error()) {
-    <p class="text-danger text-center py-5">
-      No pudimos cargar los productos. Intentá nuevamente más tarde.
-    </p>
-  } @else if (productosFiltrados().length === 0) {
-    <p class="text-center text-muted py-5">
-      No encontramos productos que coincidan con tu búsqueda.
-    </p>
+  <p class="text-danger text-center py-5">
+    No pudimos cargar los productos. Intentá nuevamente más tarde.
+  </p>
+  } @else if (productos().length === 0) {
+  <p class="text-center text-muted py-5">
+    No encontramos productos que coincidan con tu búsqueda.
+  </p>
   } @else {
-    <p class="text-muted mb-3">
-      {{ productosFiltrados().length }} producto(s) encontrados
-    </p>
+  <p class="text-muted mb-3">{{ total() }} producto(s) encontrados</p>
 
-    <div class="row g-4">
-      @for (producto of productosFiltrados(); track producto.id) {
-        <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
-          <a
-            class="card h-100 text-decoration-none text-reset shadow-sm producto-card"
-            [routerLink]="['/productos', producto.id]"
-          >
-            <div class="position-relative">
-              <img
-                [src]="producto.imagenUrl"
-                [alt]="producto.nombre"
-                class="card-img-top producto-imagen"
-              />
-
-              @if (!producto.disponible) {
-                <span class="badge text-bg-secondary position-absolute top-0 end-0 m-2">
-                  Sin stock
-                </span>
-              }
-            </div>
-
-            <div class="card-body d-flex flex-column">
-              <span class="text-muted small text-uppercase">
-                {{ producto.marca }}
-              </span>
-
-              <h2 class="h6 card-title mb-1">{{ producto.nombre }}</h2>
-
-              <p class="card-text text-muted small mb-2">
-                {{ producto.clasificacion }}
-              </p>
-
-              <p class="card-text small text-muted mb-2 producto-specs">
-                {{ producto.almacenamientoGb }} GB · {{ producto.ramGb }} GB RAM
-              </p>
-
-              <p class="card-text fw-bold fs-5 mt-auto mb-0">
-                {{ formatearPrecio(producto.precio) }}
-              </p>
-            </div>
-          </a>
+  <div class="row g-4">
+    @for (producto of productos(); track producto.id) {
+    <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+      <a class="card h-100 text-decoration-none text-reset shadow-sm producto-card"
+        [routerLink]="['/productos', producto.id]">
+        <div class="position-relative">
+          <img [src]="producto.imagenUrl" [alt]="producto.nombre" class="card-img-top producto-imagen" />
+          @if (!producto.disponible) {
+          <span class="badge text-bg-secondary position-absolute top-0 end-0 m-2">Sin stock</span>
+          }
         </div>
-      }
+
+        <div class="card-body d-flex flex-column">
+          <span class="text-muted small text-uppercase">{{ producto.marca }}</span>
+          <h2 class="h6 card-title mb-1">{{ producto.nombre }}</h2>
+          <p class="card-text text-muted small mb-2">{{ producto.clasificacion }}</p>
+          <p class="card-text small text-muted mb-2 producto-specs">
+            {{ producto.almacenamientoGb }} GB · {{ producto.ramGb }} GB RAM
+          </p>
+          <p class="card-text fw-bold fs-5 mt-auto mb-0">{{ formatearPrecio(producto.precio) }}</p>
+        </div>
+      </a>
     </div>
+    }
+  </div>
+
+  @if (totalPaginas() > 1) {
+  <nav class="d-flex justify-content-center align-items-center gap-3 mt-4" aria-label="Paginación">
+    <button type="button" class="btn btn-outline-primary" [disabled]="pagina() === 1"
+      (click)="cambiarPagina(pagina() - 1)">
+      Anterior
+    </button>
+    <span>Página {{ pagina() }} de {{ totalPaginas() }}</span>
+    <button type="button" class="btn btn-outline-primary" [disabled]="pagina() === totalPaginas()"
+      (click)="cambiarPagina(pagina() + 1)">
+      Siguiente
+    </button>
+  </nav>
+  }
   }
 </section>
