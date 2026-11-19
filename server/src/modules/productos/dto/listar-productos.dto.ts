@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
+import { IsIn, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
 
 export class ListarProductosDto {
   @IsOptional()
@@ -34,4 +34,8 @@ export class ListarProductosDto {
   @IsInt()
   @Min(0)
   precioMin?: number;
+
+  @IsOptional()
+  @IsIn(['precio_asc', 'precio_desc'])
+  orden?: 'precio_asc' | 'precio_desc';
 }

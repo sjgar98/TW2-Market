@@ -16,11 +16,9 @@ export class ProductosRepository {
   constructor(
     @InjectRepository(Producto)
     private readonly repo: Repository<Producto>,
-  ) {}
+  ) { }
 
-  async findPaginado(
-    filtros: ListarProductosDto,
-  ): Promise<[Producto[], number]> {
+  async findPaginado(filtros: ListarProductosDto): Promise<[Producto[], number]> {
     const where: FindOptionsWhere<Producto> = {};
     if (filtros.marca) where.marca = ILike(filtros.marca);
     if (filtros.busqueda) where.nombre = ILike(`%${filtros.busqueda}%`);
@@ -33,12 +31,18 @@ export class ProductosRepository {
       where.precio = LessThanOrEqual(filtros.precioMax);
     }
 
-    return this.repo.findAndCount({
-      where,
-      order: { nombre: 'ASC' },
-      skip: (filtros.pagina - 1) * filtros.limite,
-      take: filtros.limite,
-    });
+    const direccion = filtros.orden === 'precio_desc' ? 'DESC' : 'ASC';
+    const campo = filtros.orden ? 'p.precio' : 'p.nombre';
+
+    return this.repo
+      .createQueryBuilder('p')
+      .where(where)
+      .orderBy('CASE WHEN p.stock > 0 THEN 0 ELSE 1 END', 'ASC')
+      .addOrderBy(campo, direccion)
+      .addOrderBy('p.nombre', 'ASC')
+      .skip((filtros.pagina - 1) * filtros.limite)
+      .take(filtros.limite)
+      .getManyAndCount();
   }
 
   async findMarcas(): Promise<string[]> {
