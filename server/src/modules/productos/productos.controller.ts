@@ -11,13 +11,23 @@ export class ProductosController {
 
   @Public()
   @Get()
-  listar(@Query() query: ListarProductosDto): Promise<ListadoPaginadoDto<ProductoRespuestaDto>> {
-    return this.productosService.listar(query.pagina, query.limite, query.busqueda);
+  listar(
+    @Query() query: ListarProductosDto,
+  ): Promise<ListadoPaginadoDto<ProductoRespuestaDto>> {
+    return this.productosService.listar(query);
+  }
+
+  @Public()
+  @Get('marcas')
+  listarMarcas(): Promise<string[]> {
+    return this.productosService.listarMarcas();
   }
 
   @Public()
   @Get(':id')
-  obtenerPorId(@Param('id', ParseUUIDPipe) id: string): Promise<ProductoRespuestaDto> {
+  obtenerPorId(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<ProductoRespuestaDto> {
     return this.productosService.obtenerPorId(id);
   }
 }
