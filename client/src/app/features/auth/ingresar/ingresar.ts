@@ -34,6 +34,7 @@ export class Ingresar {
   readonly returnUrl = input<string>();
   readonly cuentaCreada = input<string>();
   readonly motivo = input<string>();
+  readonly passwordRestablecida = input<string>();
 
   private readonly authApi = inject(AuthApi);
   private readonly sesion = inject(Sesion);

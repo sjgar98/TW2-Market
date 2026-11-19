@@ -9,6 +9,8 @@
             <app-aviso tipo="exito"
               >Tu cuenta fue creada. Ingresá con tu email y contraseña.</app-aviso
             >
+          } @else if (passwordRestablecida()) {
+            <app-aviso tipo="exito">Tu contraseña fue actualizada. Ingresá con la nueva.</app-aviso>
           } @else if (motivo() === 'carrito') {
             <app-aviso tipo="info">Ingresá para agregar productos al carrito.</app-aviso>
           }
@@ -50,6 +52,12 @@
                 <mat-error>{{ error.message }}</mat-error>
               }
             </mat-form-field>
+
+            <div class="d-flex justify-content-end">
+              <a mat-button routerLink="/recuperar-password" class="px-0"
+                >¿Olvidaste tu contraseña?</a
+              >
+            </div>
 
             <button
               mat-flat-button

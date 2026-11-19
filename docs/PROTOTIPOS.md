@@ -15,7 +15,7 @@ Diseño de referencia de las pantallas a desarrollar (ver [ENUNCIADO.md](ENUNCIA
 | --- | --- | --- | --- |
 | 1 | Ingresar (signin) | `/ingresar` | Requerido |
 | 2 | Crear cuenta (signup) | `/registro` | Requerido |
-| 3 | Recuperar contraseña | `/recuperar-password` | Opcional (backend completo; frontend en parte 3) |
+| 3 | Recuperar contraseña | `/recuperar-password` | Opcional |
 | 4 | Listado de productos | `/productos` | Requerido |
 | 5 | Detalle de producto | `/productos/:id` | Requerido |
 | 6 | Mi pedido (carrito) | `/carrito` | Requerido |
@@ -26,13 +26,15 @@ Diseño de referencia de las pantallas a desarrollar (ver [ENUNCIADO.md](ENUNCIA
 
 ### 1. Ingresar
 
-Email y contraseña (con botón para mostrarla) y link a "Registrate". El link "¿Olvidaste tu contraseña?" se agrega junto con las pantallas de recupero (parte 3). Cuando se llega redirigido desde "Agregar" sin sesión, se muestra el aviso "Ingresá para agregar productos al carrito.":
+Email y contraseña (con botón para mostrarla), link a "Registrate" y link "¿Olvidaste tu contraseña?" que lleva a `/recuperar-password`. Cuando se llega redirigido desde "Agregar" sin sesión, se muestra el aviso "Ingresá para agregar productos al carrito.":
 
 ![Ingresar](prototipos/01-ingresar.png)
 
 Después de registrarse, se muestra el aviso de cuenta creada:
 
 ![Ingresar con cuenta creada](prototipos/01b-ingresar-cuenta-creada.png)
+
+Después de restablecer la contraseña, se muestra el aviso "Tu contraseña fue actualizada. Ingresá con la nueva.".
 
 ### 2. Crear cuenta
 
@@ -42,9 +44,12 @@ Reglas de complejidad (confirmadas; las mismas en frontend y backend): al menos 
 
 ![Crear cuenta](prototipos/02-crear-cuenta.png)
 
-### 3. Recuperar contraseña (backend completo)
+### 3. Recuperar contraseña
 
-El backend ya permite pedir el enlace y restablecer la contraseña: `POST /api/auth/recuperar-password` (siempre 202, token de un solo uso que vence a los 30 minutos y se envía por correo) y `POST /api/auth/restablecer-password` (valida token y política, actualiza el hash y consume el token). Las pantallas `/recuperar-password` (pedir el enlace) y `/restablecer-password?token=...` (elegir la nueva contraseña) se implementan en la parte 3; hasta entonces no hay link desde Ingresar.
+Dos pantallas:
+
+- `/recuperar-password`: pide el email. Al enviar muestra siempre "Si el email está registrado, te enviamos un enlace..." (no revela si la cuenta existe) y ofrece "Usar otro email" o "Volver a ingresar".
+- `/restablecer-password?token=...`: nueva contraseña y repetir contraseña, con el mismo checklist en vivo que el registro. Si el token falta, venció o ya se usó, muestra "El enlace no es válido o venció" y un botón para pedir otro. Al guardar, cierra la sesión local y vuelve a `/ingresar?passwordRestablecida=1`, donde se muestra el aviso de éxito.
 
 ### 4. Listado de productos
 
@@ -115,6 +120,12 @@ Respuesta a las aclaraciones de la cátedra: las funcionalidades del enunciado d
 - Al ingresar se vuelve a la ruta de origen (`returnUrl`), o a `/productos` si no hay ninguna.
 - Al registrarse se va a `/ingresar`, con un aviso de cuenta creada.
 - Si una respuesta es 401 (sesión vencida), el cliente redirige a `/ingresar`.
+
+**Recupero de contraseña.**
+- La solicitud responde siempre "Si el email está registrado...", exista o no la cuenta.
+- El enlace vence a los 30 minutos y se puede usar una sola vez. Si falta, venció o ya se usó, la pantalla muestra "El enlace no es válido o venció" y ofrece pedir otro.
+- La nueva contraseña cumple la misma política que el registro, con checklist en vivo.
+- Al restablecer se cierra la sesión local (si había) y se vuelve a `/ingresar?passwordRestablecida=1`, que muestra el aviso de éxito.
 
 **Carrito.**
 - El catálogo (listado y detalle) es público.

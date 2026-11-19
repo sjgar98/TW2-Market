@@ -1,7 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import type { AccessToken, Credenciales, DatosRegistro, UsuarioRegistrado } from './auth-models';
+import type {
+  AccessToken,
+  Credenciales,
+  DatosRegistro,
+  DatosRestablecimiento,
+  MensajeRespuesta,
+  UsuarioRegistrado,
+} from './auth-models';
 
 @Service()
 export class AuthApi {
@@ -13,5 +20,17 @@ export class AuthApi {
 
   signup(datos: DatosRegistro): Promise<UsuarioRegistrado> {
     return firstValueFrom(this.http.post<UsuarioRegistrado>('/api/auth/signup', datos));
+  }
+
+  recuperarPassword(email: string): Promise<MensajeRespuesta> {
+    return firstValueFrom(
+      this.http.post<MensajeRespuesta>('/api/auth/recuperar-password', { email }),
+    );
+  }
+
+  restablecerPassword(datos: DatosRestablecimiento): Promise<MensajeRespuesta> {
+    return firstValueFrom(
+      this.http.post<MensajeRespuesta>('/api/auth/restablecer-password', datos),
+    );
   }
 }
