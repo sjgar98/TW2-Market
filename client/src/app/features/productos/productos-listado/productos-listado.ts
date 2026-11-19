@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 import { ProductosApi } from '../../../core/productos/productos-api';
 import { Producto } from '../../../core/productos/producto';
 import { formatearPrecio } from '../../../core/formato-precio';
-import { catchError, debounceTime, of, switchMap, tap } from 'rxjs';
+import { catchError, debounceTime, of, switchMap } from 'rxjs';
 import { toObservable } from '@angular/core/rxjs-interop';
 
 
@@ -29,6 +29,14 @@ export class ProductosListado {
   readonly marca = signal('');
   readonly precioMin = signal<number | null>(null);
   readonly precioMax = signal<number | null>(null);
+  readonly precioMinInvalido = computed(() => {
+    const precioMin = this.precioMin();
+    return precioMin !== null && precioMin < 0;
+  });
+  readonly precioMaxInvalido = computed(() => {
+    const precioMax = this.precioMax();
+    return precioMax !== null && precioMax < 0;
+  });
   readonly pagina = signal(1);
   readonly orden = signal<'precio_asc' | 'precio_desc' | null>(null);
 
@@ -47,12 +55,17 @@ export class ProductosListado {
     toObservable(this.filtros)
       .pipe(                            
         debounceTime(1000),
-        tap(() => {
+        switchMap((f) => {
+          const precioMinInvalido = f.precioMin !== null && f.precioMin < 0;
+          const precioMaxInvalido = f.precioMax !== null && f.precioMax < 0;
+          if (precioMinInvalido || precioMaxInvalido) {
+            return of(null);
+          }
+
           this.cargando.set(true);
           this.error.set(false);
-        }),
-        switchMap((f) =>
-          this.productosApi
+
+          return this.productosApi
             .listar({
               busqueda: f.busqueda,
               marca: f.marca,
@@ -67,8 +80,8 @@ export class ProductosListado {
                 this.error.set(true);
                 return of(null);
               }),
-            ),
-        ),
+            );
+        }),
       )                                  
       .subscribe((respuesta) => {
         if (respuesta) {
