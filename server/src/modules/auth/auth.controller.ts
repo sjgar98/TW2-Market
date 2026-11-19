@@ -2,14 +2,27 @@ import { Body, Controller, HttpCode, Post, UseGuards } from '@nestjs/common';
 import { Public } from '../../common/decorators/public.decorator.js';
 import { UsuarioActual } from '../../common/decorators/usuario-actual.decorator.js';
 import type { UsuarioPublico } from '../../entities/usuario.entity.js';
-import { SignInDto, SignUpDto } from './auth.dto.js';
+import {
+  RecuperarPasswordDto,
+  RestablecerPasswordDto,
+  SignInDto,
+  SignUpDto,
+} from './auth.dto.js';
 import { AuthService } from './auth.service.js';
 import type { AccessToken } from './auth.types.js';
 import { LocalAuthGuard } from './guards/local-auth.guard.js';
+import {
+  MENSAJE_PASSWORD_ACTUALIZADA,
+  MENSAJE_SOLICITUD_RECUPERACION,
+  RecuperacionPasswordService,
+} from './recuperacion-password.service.js';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly recuperacionPasswordService: RecuperacionPasswordService,
+  ) {}
 
   @Public()
   @UseGuards(LocalAuthGuard)
@@ -26,5 +39,25 @@ export class AuthController {
   @Post('signup')
   signup(@Body() body: SignUpDto): Promise<UsuarioPublico> {
     return this.authService.signup(body);
+  }
+
+  @Public()
+  @HttpCode(202)
+  @Post('recuperar-password')
+  async recuperarPassword(
+    @Body() body: RecuperarPasswordDto,
+  ): Promise<{ message: string }> {
+    await this.recuperacionPasswordService.solicitar(body.email);
+    return { message: MENSAJE_SOLICITUD_RECUPERACION };
+  }
+
+  @Public()
+  @HttpCode(200)
+  @Post('restablecer-password')
+  async restablecerPassword(
+    @Body() body: RestablecerPasswordDto,
+  ): Promise<{ message: string }> {
+    await this.recuperacionPasswordService.restablecer(body);
+    return { message: MENSAJE_PASSWORD_ACTUALIZADA };
   }
 }

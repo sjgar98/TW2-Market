@@ -15,7 +15,7 @@ Diseño de referencia de las pantallas a desarrollar (ver [ENUNCIADO.md](ENUNCIA
 | --- | --- | --- | --- |
 | 1 | Ingresar (signin) | `/ingresar` | Requerido |
 | 2 | Crear cuenta (signup) | `/registro` | Requerido |
-| 3 | ~~Recuperar contraseña~~ | — | Opcional, **descartada** |
+| 3 | Recuperar contraseña | `/recuperar-password` | Opcional |
 | 4 | Listado de productos | `/productos` | Requerido |
 | 5 | Detalle de producto | `/productos/:id` | Requerido |
 | 6 | Mi pedido (carrito) | `/carrito` | Requerido |
@@ -26,13 +26,15 @@ Diseño de referencia de las pantallas a desarrollar (ver [ENUNCIADO.md](ENUNCIA
 
 ### 1. Ingresar
 
-Email y contraseña (con botón para mostrarla) y link a "Registrate". No lleva "¿Olvidaste tu contraseña?" porque el recupero no se implementa (ver pantalla 3). Cuando se llega redirigido desde "Agregar" sin sesión, se muestra el aviso "Ingresá para agregar productos al carrito.":
+Email y contraseña (con botón para mostrarla), link a "Registrate" y link "¿Olvidaste tu contraseña?" que lleva a `/recuperar-password`. Cuando se llega redirigido desde "Agregar" sin sesión, se muestra el aviso "Ingresá para agregar productos al carrito.":
 
 ![Ingresar](prototipos/01-ingresar.png)
 
 Después de registrarse, se muestra el aviso de cuenta creada:
 
 ![Ingresar con cuenta creada](prototipos/01b-ingresar-cuenta-creada.png)
+
+Después de restablecer la contraseña, se muestra el aviso "Tu contraseña fue actualizada. Ingresá con la nueva.".
 
 ### 2. Crear cuenta
 
@@ -42,9 +44,12 @@ Reglas de complejidad (confirmadas; las mismas en frontend y backend): al menos 
 
 ![Crear cuenta](prototipos/02-crear-cuenta.png)
 
-### 3. Recuperar contraseña (descartada)
+### 3. Recuperar contraseña
 
-Es opcional en el enunciado y no se implementa. Sin un envío real de emails, el flujo quedaría como un botón que no hace nada, así que no hay pantalla, ruta, endpoint ni link desde Ingresar.
+Dos pantallas:
+
+- `/recuperar-password`: pide el email. Al enviar muestra siempre "Si el email está registrado, te enviamos un enlace..." (no revela si la cuenta existe) y ofrece "Usar otro email" o "Volver a ingresar".
+- `/restablecer-password?token=...`: nueva contraseña y repetir contraseña, con el mismo checklist en vivo que el registro. Si el token falta, venció o ya se usó, muestra "El enlace no es válido o venció" y un botón para pedir otro. Al guardar, cierra la sesión local y vuelve a `/ingresar?passwordRestablecida=1`, donde se muestra el aviso de éxito.
 
 ### 4. Listado de productos
 
@@ -116,6 +121,12 @@ Respuesta a las aclaraciones de la cátedra: las funcionalidades del enunciado d
 - Al registrarse se va a `/ingresar`, con un aviso de cuenta creada.
 - Si una respuesta es 401 (sesión vencida), el cliente redirige a `/ingresar`.
 
+**Recupero de contraseña.**
+- La solicitud responde siempre "Si el email está registrado...", exista o no la cuenta.
+- El enlace vence a los 30 minutos y se puede usar una sola vez. Si falta, venció o ya se usó, la pantalla muestra "El enlace no es válido o venció" y ofrece pedir otro.
+- La nueva contraseña cumple la misma política que el registro, con checklist en vivo.
+- Al restablecer se cierra la sesión local (si había) y se vuelve a `/ingresar?passwordRestablecida=1`, que muestra el aviso de éxito.
+
 **Carrito.**
 - El catálogo (listado y detalle) es público.
 - Para agregar al carrito hay que tener sesión. Sin ella, se redirige a `/ingresar?returnUrl=...` con el mensaje "Ingresá para agregar productos al carrito.".
@@ -155,6 +166,8 @@ Respuesta a las aclaraciones de la cátedra: las funcionalidades del enunciado d
 | --- | --- |
 | Ingresar | `POST /api/auth/signin` → `{ accessToken }` |
 | Crear cuenta | `POST /api/auth/signup` (409 si el email existe) |
+| Recuperar contraseña | `POST /api/auth/recuperar-password` (público; 202 siempre) |
+| Restablecer contraseña | `POST /api/auth/restablecer-password` (público; token + nueva contraseña) |
 | Listado | `GET /api/products?search=&classification=&page=&limit=` (público) |
 | Detalle | `GET /api/products/:id` (público, 404 si no existe) |
 | Clasificaciones | `GET /api/classifications` (público) |

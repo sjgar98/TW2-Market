@@ -9,6 +9,13 @@ export type EnvironmentVariables = {
   DB_MIGRATIONS_RUN: boolean;
   JWT_SECRET: string;
   JWT_EXPIRES_IN: string;
+  APP_URL: string;
+  SMTP_HOST?: string;
+  SMTP_PORT: number;
+  SMTP_SECURE: boolean;
+  SMTP_USER?: string;
+  SMTP_PASS?: string;
+  CORREO_REMITENTE: string;
 };
 
 export const envValidationSchema = Joi.object<EnvironmentVariables, true>({
@@ -21,6 +28,15 @@ export const envValidationSchema = Joi.object<EnvironmentVariables, true>({
   JWT_EXPIRES_IN: Joi.string()
     .pattern(/^\d+\s?(ms|s|m|h|d|w|y)?$/)
     .default('12h'),
+  APP_URL: Joi.string()
+    .uri({ scheme: ['http', 'https'] })
+    .default('http://localhost:4200'),
+  SMTP_HOST: Joi.string().allow('').optional(),
+  SMTP_PORT: Joi.number().port().default(587),
+  SMTP_SECURE: Joi.boolean().default(false),
+  SMTP_USER: Joi.string().allow('').optional(),
+  SMTP_PASS: Joi.string().allow('').optional(),
+  CORREO_REMITENTE: Joi.string().default('no-responder@tw2market.local'),
 });
 
 export const configModuleOptions: ConfigModuleOptions = {

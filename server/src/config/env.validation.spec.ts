@@ -20,6 +20,10 @@ describe('envValidationSchema', () => {
       DB_SYNCHRONIZE: false,
       DB_MIGRATIONS_RUN: true,
       JWT_EXPIRES_IN: '12h',
+      APP_URL: 'http://localhost:4200',
+      SMTP_PORT: 587,
+      SMTP_SECURE: false,
+      CORREO_REMITENTE: 'no-responder@tw2market.local',
     });
   });
 

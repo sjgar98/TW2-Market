@@ -24,6 +24,44 @@ export class SignInDto {
   password: string;
 }
 
+export class RecuperarPasswordDto {
+  @Transform(normalizarEmail)
+  @IsEmail(undefined, { message: 'El email no es válido' })
+  @MaxLength(254)
+  email: string;
+}
+
+export class RestablecerPasswordDto {
+  @Transform(trim)
+  @IsString()
+  @IsNotEmpty({ message: 'El enlace no es válido o venció' })
+  @MaxLength(512)
+  token: string;
+
+  @IsStrongPassword(
+    {
+      minLength: 8,
+      minLowercase: 1,
+      minUppercase: 1,
+      minNumbers: 1,
+      minSymbols: 1,
+    },
+    {
+      message:
+        'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un símbolo',
+    },
+  )
+  @MaxLength(72, {
+    message: 'La contraseña no puede superar los 72 caracteres',
+  })
+  password: string;
+
+  @ValidateIf((o: RestablecerPasswordDto) => o.password !== o.repeatPassword)
+  @IsNotEmpty()
+  @IsEmpty({ message: 'Las contraseñas no coinciden' })
+  repeatPassword: string;
+}
+
 export class SignUpDto {
   @Transform(normalizarEmail)
   @IsEmail(undefined, { message: 'El email no es válido' })

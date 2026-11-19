@@ -16,6 +16,16 @@ export type AccessToken = {
   accessToken: string;
 };
 
+export type MensajeRespuesta = {
+  message: string;
+};
+
+export type DatosRestablecimiento = {
+  token: string;
+  password: string;
+  repeatPassword: string;
+};
+
 export type UsuarioRegistrado = {
   id: string;
   email: string;
