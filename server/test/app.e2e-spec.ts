@@ -83,4 +83,22 @@ describe('App (e2e)', () => {
   it('returns 404 for unknown API routes instead of the frontend', () => {
     return request(app.getHttpServer()).get('/api/unknown').expect(404);
   });
+
+  it('rejects a negative minimum product price', () => {
+    return request(app.getHttpServer())
+      .get('/api/productos?precioMin=-1')
+      .expect(400);
+  });
+
+  it('rejects a negative maximum product price', () => {
+    return request(app.getHttpServer())
+      .get('/api/productos?precioMax=-1')
+      .expect(400);
+  });
+
+  it('accepts zero as the minimum and maximum product price', () => {
+    return request(app.getHttpServer())
+      .get('/api/productos?precioMin=0&precioMax=0')
+      .expect(200);
+  });
 });
