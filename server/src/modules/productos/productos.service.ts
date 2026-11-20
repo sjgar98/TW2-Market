@@ -46,7 +46,6 @@ export class ProductosService {
       nombre: dto.nombre,
       marca: dto.marca,
       descripcion: dto.descripcion,
-      clasificacion: dto.clasificacion,
       precio: dto.precio,
       stock: dto.stock,
       imagenUrl:

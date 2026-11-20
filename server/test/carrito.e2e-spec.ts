@@ -36,7 +36,6 @@ describe('Carrito (e2e)', () => {
       nombre: 'Celular',
       marca: 'Marca',
       descripcion: 'Descripción',
-      clasificacion: 'Gama media',
       precio: 100,
       stock,
       imagenUrl: 'https://placehold.co/600x600',

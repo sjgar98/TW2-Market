@@ -40,12 +40,6 @@ export class CrearProductoDto {
   })
   descripcion: string;
 
-  @Transform(trim)
-  @IsString()
-  @IsNotEmpty({ message: 'La clasificación es obligatoria' })
-  @MaxLength(80)
-  clasificacion: string;
-
   @Type(() => Number)
   @IsNumber(
     { maxDecimalPlaces: 2 },
