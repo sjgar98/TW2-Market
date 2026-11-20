@@ -1,0 +1,191 @@
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-10 col-lg-8">
+      <mat-card appearance="outlined">
+        <mat-card-content class="d-flex flex-column gap-3 pt-3">
+          <h1 class="fs-4 fw-normal m-0">Cargar producto</h1>
+
+          <form [formRoot]="formulario" class="d-flex flex-column gap-2">
+            <div class="row g-2">
+              <div class="col-12 col-sm-6">
+                <mat-form-field class="w-100">
+                  <mat-label>Nombre*</mat-label>
+                  <input matInput type="text" [formField]="formulario.nombre" />
+                  @if (formulario.nombre().errors()[0]; as error) {
+                    <mat-error>{{ error.message }}</mat-error>
+                  }
+                </mat-form-field>
+              </div>
+
+              <div class="col-12 col-sm-6">
+                <mat-form-field class="w-100">
+                  <mat-label>Marca*</mat-label>
+                  <input
+                    matInput
+                    type="text"
+                    placeholder="Ej: Motorola, Samsung, Apple"
+                    [formField]="formulario.marca"
+                  />
+                  @if (formulario.marca().errors()[0]; as error) {
+                    <mat-error>{{ error.message }}</mat-error>
+                  }
+                </mat-form-field>
+              </div>
+            </div>
+
+            <mat-form-field>
+              <mat-label>Descripción*</mat-label>
+              <textarea
+                matInput
+                rows="3"
+                [formField]="formulario.descripcion"
+              ></textarea>
+              <mat-hint align="end">{{ formulario.descripcion().value().length }} / 500</mat-hint>
+              @if (formulario.descripcion().errors()[0]; as error) {
+                <mat-error>{{ error.message }}</mat-error>
+              }
+            </mat-form-field>
+
+            <div class="row g-2">
+              <div class="col-12 col-sm-4">
+                <mat-form-field class="w-100">
+                  <mat-label>Clasificación*</mat-label>
+                  <mat-select [formField]="formulario.clasificacion">
+                    @for (clasificacion of clasificaciones; track clasificacion) {
+                      <mat-option [value]="clasificacion">{{ clasificacion }}</mat-option>
+                    }
+                  </mat-select>
+                  @if (formulario.clasificacion().errors()[0]; as error) {
+                    <mat-error>{{ error.message }}</mat-error>
+                  }
+                </mat-form-field>
+              </div>
+
+              <div class="col-12 col-sm-4">
+                <mat-form-field class="w-100">
+                  <mat-label>Precio*</mat-label>
+                  <span matTextPrefix>$&nbsp;</span>
+                  <input
+                    matInput
+                    type="number"
+                    step="0.01"
+                    [formField]="formulario.precio"
+                  />
+                  @if (formulario.precio().errors()[0]; as error) {
+                    <mat-error>{{ error.message }}</mat-error>
+                  }
+                </mat-form-field>
+              </div>
+
+              <div class="col-12 col-sm-4">
+                <mat-form-field class="w-100">
+                  <mat-label>Stock*</mat-label>
+                  <input matInput type="number" step="1" [formField]="formulario.stock" />
+                  <mat-hint>Unidades disponibles</mat-hint>
+                  @if (formulario.stock().errors()[0]; as error) {
+                    <mat-error>{{ error.message }}</mat-error>
+                  }
+                </mat-form-field>
+              </div>
+            </div>
+
+            <h2 class="fs-6 fw-medium mt-2 mb-0">Especificaciones técnicas</h2>
+
+            <div class="row g-2">
+              <div class="col-12 col-sm-6">
+                <mat-form-field class="w-100">
+                  <mat-label>Pantalla*</mat-label>
+                  <input
+                    matInput
+                    type="text"
+                    placeholder='Ej: 6.5" AMOLED 120Hz'
+                    [formField]="formulario.pantalla"
+                  />
+                  @if (formulario.pantalla().errors()[0]; as error) {
+                    <mat-error>{{ error.message }}</mat-error>
+                  }
+                </mat-form-field>
+              </div>
+
+              <div class="col-12 col-sm-6">
+                <mat-form-field class="w-100">
+                  <mat-label>Cámara*</mat-label>
+                  <input
+                    matInput
+                    type="text"
+                    placeholder="Ej: 50MP principal + 8MP ultra gran angular"
+                    [formField]="formulario.camara"
+                  />
+                  @if (formulario.camara().errors()[0]; as error) {
+                    <mat-error>{{ error.message }}</mat-error>
+                  }
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div class="row g-2">
+              <div class="col-12 col-sm-4">
+                <mat-form-field class="w-100">
+                  <mat-label>Almacenamiento (GB)*</mat-label>
+                  <input
+                    matInput
+                    type="number"
+                    step="1"
+                    [formField]="formulario.almacenamientoGb"
+                  />
+                  @if (formulario.almacenamientoGb().errors()[0]; as error) {
+                    <mat-error>{{ error.message }}</mat-error>
+                  }
+                </mat-form-field>
+              </div>
+
+              <div class="col-12 col-sm-4">
+                <mat-form-field class="w-100">
+                  <mat-label>RAM (GB)*</mat-label>
+                  <input matInput type="number" step="1" [formField]="formulario.ramGb" />
+                  @if (formulario.ramGb().errors()[0]; as error) {
+                    <mat-error>{{ error.message }}</mat-error>
+                  }
+                </mat-form-field>
+              </div>
+
+              <div class="col-12 col-sm-4">
+                <mat-form-field class="w-100">
+                  <mat-label>Batería (mAh)*</mat-label>
+                  <input matInput type="number" step="1" [formField]="formulario.bateriaMah" />
+                  @if (formulario.bateriaMah().errors()[0]; as error) {
+                    <mat-error>{{ error.message }}</mat-error>
+                  }
+                </mat-form-field>
+              </div>
+            </div>
+
+            <mat-form-field>
+              <mat-label>URL de imagen (opcional)</mat-label>
+              <input
+                matInput
+                type="url"
+                placeholder="Si queda vacío se genera una imagen automática"
+                [formField]="formulario.imagenUrl"
+              />
+              @if (formulario.imagenUrl().errors()[0]; as error) {
+                <mat-error>{{ error.message }}</mat-error>
+              }
+            </mat-form-field>
+
+            <div class="d-flex justify-content-end gap-2 mt-2">
+              <a mat-button routerLink="/productos">Cancelar</a>
+              <button
+                mat-flat-button
+                type="submit"
+                [disabled]="formulario().invalid() || formulario().submitting()"
+              >
+                Guardar
+              </button>
+            </div>
+          </form>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

@@ -1,9 +1,20 @@
-import { Controller, Get, Param, ParseUUIDPipe, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { Public } from '../../common/decorators/public.decorator.js';
+import { AdminGuard } from '../auth/guards/admin.guard.js';
 import { ProductosService } from './productos.service.js';
 import { ProductoRespuestaDto } from './dto/producto-respuesta.dto.js';
 import { ListadoPaginadoDto } from './dto/listado-paginado.dto.js';
 import { ListarProductosDto } from './dto/listar-productos.dto.js';
+import { CrearProductoDto } from './dto/crear-producto.dto.js';
 
 @Controller('productos')
 export class ProductosController {
@@ -29,5 +40,11 @@ export class ProductosController {
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<ProductoRespuestaDto> {
     return this.productosService.obtenerPorId(id);
+  }
+
+  @UseGuards(AdminGuard)
+  @Post()
+  crear(@Body() dto: CrearProductoDto): Promise<ProductoRespuestaDto> {
+    return this.productosService.crear(dto);
   }
 }

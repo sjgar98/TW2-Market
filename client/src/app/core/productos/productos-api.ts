@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Service, inject } from '@angular/core';
-import { Observable } from 'rxjs';
-import { ListadoPaginado, Producto } from './producto';
+import { firstValueFrom, Observable } from 'rxjs';
+import { CrearProductoPayload, ListadoPaginado, Producto } from './producto';
 
 export interface FiltrosProductos {
   busqueda?: string;
@@ -37,5 +37,9 @@ export class ProductosApi {
 
   obtenerPorId(id: string): Observable<Producto> {
     return this.http.get<Producto>(`${this.base}/${id}`);
+  }
+
+  crear(datos: CrearProductoPayload): Promise<Producto> {
+    return firstValueFrom(this.http.post<Producto>(this.base, datos));
   }
 }

@@ -21,3 +21,18 @@ export interface ListadoPaginado<T> {
   pagina: number;
   limite: number;
 }
+
+export interface CrearProductoPayload {
+  nombre: string;
+  marca: string;
+  descripcion: string;
+  clasificacion: string;
+  precio: number;
+  stock: number;
+  imagenUrl?: string;
+  pantalla: string;
+  almacenamientoGb: number;
+  ramGb: number;
+  bateriaMah: number;
+  camara: string;
+}
