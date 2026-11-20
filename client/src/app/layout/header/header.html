@@ -8,6 +8,9 @@
       <span>TW2 Market</span>
     </a>
     <a mat-button routerLink="/productos">Productos</a>
+    @if (sesion.usuario()?.isAdmin) {
+      <a mat-button routerLink="/productos/nuevo">Cargar producto</a>
+    }
     <span class="flex-grow-1"></span>
     @if (sesion.usuario(); as usuario) {
       <a

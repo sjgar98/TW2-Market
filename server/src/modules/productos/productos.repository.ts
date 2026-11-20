@@ -57,4 +57,9 @@ export class ProductosRepository {
   findById(id: string): Promise<Producto | null> {
     return this.repo.findOne({ where: { id } });
   }
+
+  crear(datos: Omit<Producto, 'id'>): Promise<Producto> {
+    const producto = this.repo.create(datos);
+    return this.repo.save(producto);
+  }
 }
