@@ -12,6 +12,11 @@ html {
       density: 0,
     )
   );
+  @include mat.sidenav-overrides(
+    (
+      container-width: 280px,
+    )
+  );
 }
 
 body {

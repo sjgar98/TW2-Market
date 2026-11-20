@@ -1,7 +1,6 @@
 import { IsInt, IsUUID, Max, Min } from 'class-validator';
 
 export class AgregarItemDto {
-    
     @IsUUID()
     productoId: string;
 

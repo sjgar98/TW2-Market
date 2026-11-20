@@ -41,6 +41,14 @@ const validarEntero = (campo: Parameters<typeof validate<number | null>>[0]) => 
   });
 };
 
+const esUrlHttp = (texto: string): boolean => {
+  try {
+    return ['http:', 'https:'].includes(new URL(texto).protocol);
+  } catch {
+    return false;
+  }
+};
+
 @Component({
   selector: 'app-cargar-producto',
   imports: [
@@ -93,6 +101,12 @@ export class CargarProducto {
       validarEntero(campos.stock);
 
       maxLength(campos.imagenUrl, 500, { message: 'Máximo 500 caracteres' });
+      validate(campos.imagenUrl, ({ value }) => {
+        const url = value().trim();
+        return url && !esUrlHttp(url)
+          ? { kind: 'url', message: 'La URL debe comenzar con http:// o https://' }
+          : undefined;
+      });
 
       required(campos.pantalla, { message: 'La pantalla es obligatoria' });
       maxLength(campos.pantalla, 80, { message: 'Máximo 80 caracteres' });
