@@ -13,18 +13,14 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router, RouterLink } from '@angular/router';
 import { ProductosApi } from '../../../core/productos/productos-api';
-
-const CLASIFICACIONES = ['Gama alta', 'Gama media', 'Gama baja'] as const;
 
 type NuevoProductoModelo = {
   nombre: string;
   marca: string;
   descripcion: string;
-  clasificacion: string;
   precio: number | null;
   stock: number | null;
   imagenUrl: string;
@@ -54,7 +50,6 @@ const validarEntero = (campo: Parameters<typeof validate<number | null>>[0]) => 
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule,
     RouterLink,
   ],
   templateUrl: './cargar-producto.html',
@@ -64,13 +59,10 @@ export class CargarProducto {
   private readonly router = inject(Router);
   private readonly snackBar = inject(MatSnackBar);
 
-  protected readonly clasificaciones = CLASIFICACIONES;
-
   private readonly producto = signal<NuevoProductoModelo>({
     nombre: '',
     marca: '',
     descripcion: '',
-    clasificacion: 'Gama media',
     precio: null,
     stock: 0,
     imagenUrl: '',
@@ -92,8 +84,6 @@ export class CargarProducto {
 
       required(campos.descripcion, { message: 'La descripción es obligatoria' });
       maxLength(campos.descripcion, 500, { message: 'Máximo 500 caracteres' });
-
-      required(campos.clasificacion, { message: 'Elegí una clasificación' });
 
       required(campos.precio, { message: 'El precio es obligatorio' });
       min(campos.precio, 0.01, { message: 'Debe ser mayor a 0' });
@@ -132,7 +122,6 @@ export class CargarProducto {
               nombre: valor.nombre.trim(),
               marca: valor.marca.trim(),
               descripcion: valor.descripcion.trim(),
-              clasificacion: valor.clasificacion,
               precio: Number(valor.precio),
               stock: Number(valor.stock),
               ...(imagenLimpia ? { imagenUrl: imagenLimpia } : {}),

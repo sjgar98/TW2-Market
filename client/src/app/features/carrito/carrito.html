@@ -30,7 +30,6 @@
                 <tr [class.table-danger]="excedeStock(item)">
                   <td>
                     <a [routerLink]="['/productos', item.productoId]">{{ item.nombre }}</a>
-                    <div class="small text-secondary">{{ item.clasificacion }}</div>
                   </td>
                   <td class="text-end">{{ formatearPrecio(item.precio) }}</td>
                   <td class="text-center text-nowrap">
@@ -88,7 +87,7 @@
                 <div>
                   <a [routerLink]="['/productos', item.productoId]">{{ item.nombre }}</a>
                   <div class="small text-secondary">
-                    {{ item.clasificacion }} · {{ formatearPrecio(item.precio) }} c/u
+                    {{ formatearPrecio(item.precio) }} c/u
                   </div>
                 </div>
                 <button

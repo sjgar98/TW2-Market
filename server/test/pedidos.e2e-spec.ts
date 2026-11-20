@@ -18,7 +18,6 @@ describe('Pedidos (e2e)', () => {
   const datosProducto = {
     marca: 'Marca',
     descripcion: 'Descripción',
-    clasificacion: 'Gama media',
     imagenUrl: 'https://placehold.co/600x600',
     pantalla: '6.5" IPS',
     almacenamientoGb: 128,

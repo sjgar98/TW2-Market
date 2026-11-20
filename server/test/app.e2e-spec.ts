@@ -101,4 +101,39 @@ describe('App (e2e)', () => {
       .get('/api/productos?precioMin=0&precioMax=0')
       .expect(200);
   });
+
+  it('allows admins to create a product without a classification field', async () => {
+    const admin = await app
+      .get<Repository<Usuario>>(getRepositoryToken(Usuario))
+      .save({
+        email: 'admin@test.com',
+        passwordHash: 'hash',
+        nombre: 'Admin',
+        apellido: 'Test',
+        direccion: 'Calle 1',
+        isAdmin: true,
+      });
+    const token = await jwtService.signAsync({ sub: admin.id });
+
+    return request(app.getHttpServer())
+      .post('/api/productos')
+      .auth(token, { type: 'bearer' })
+      .send({
+        nombre: 'Celular sin gama',
+        marca: 'Marca',
+        descripcion: 'Descripción',
+        precio: 100,
+        stock: 5,
+        pantalla: '6.5" IPS',
+        almacenamientoGb: 128,
+        ramGb: 8,
+        bateriaMah: 5000,
+        camara: '50MP',
+      })
+      .expect(201)
+      .expect((res) => {
+        expect(res.body.nombre).toBe('Celular sin gama');
+        expect(res.body).not.toHaveProperty('clasificacion');
+      });
+  });
 });
