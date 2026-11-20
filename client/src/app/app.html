@@ -1,4 +1,18 @@
-<app-header />
-<main>
-  <router-outlet />
-</main>
+<mat-sidenav-container>
+  <mat-sidenav
+    #menu
+    mode="over"
+    [fixedInViewport]="true"
+    (openedChange)="menuAbierto.set($event)"
+  >
+    @defer (on idle) {
+      <app-menu-lateral (navegar)="menu.close()" />
+    }
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <app-header [menuAbierto]="menuAbierto()" (abrirMenu)="menu.open()" />
+    <main>
+      <router-outlet />
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>

@@ -1,4 +1,4 @@
-import { Component, effect, inject } from '@angular/core';
+import { Component, effect, inject, input, output } from '@angular/core';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -16,6 +16,9 @@ export class Header {
   protected readonly sesion = inject(Sesion);
   protected readonly carrito = inject(CarritoApi);
   private readonly router = inject(Router);
+
+  readonly menuAbierto = input(false);
+  readonly abrirMenu = output();
 
   constructor() {
     effect(() => {

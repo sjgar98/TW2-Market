@@ -1,0 +1,72 @@
+<nav aria-label="Menú principal">
+  @if (sesion.usuario(); as usuario) {
+    <div class="d-flex align-items-center gap-2 px-3 py-3 fw-medium">
+      <mat-icon aria-hidden="true">account_circle</mat-icon>
+      {{ usuario.nombre }} {{ usuario.apellido }}
+    </div>
+  }
+
+  <mat-nav-list>
+    <a
+      mat-list-item
+      routerLink="/productos"
+      routerLinkActive
+      #productos="routerLinkActive"
+      [routerLinkActiveOptions]="{ exact: true }"
+      [activated]="productos.isActive"
+      (click)="navegar.emit()"
+    >
+      <mat-icon matListItemIcon aria-hidden="true">storefront</mat-icon>
+      <span matListItemTitle>Productos</span>
+    </a>
+
+    @if (sesion.usuario(); as usuario) {
+      @if (usuario.isAdmin) {
+        <a
+          mat-list-item
+          routerLink="/productos/nuevo"
+          routerLinkActive
+          #nuevo="routerLinkActive"
+          [activated]="nuevo.isActive"
+          (click)="navegar.emit()"
+        >
+          <mat-icon matListItemIcon aria-hidden="true">add_box</mat-icon>
+          <span matListItemTitle>Cargar producto</span>
+        </a>
+      }
+
+      <a
+        mat-list-item
+        routerLink="/carrito"
+        routerLinkActive
+        #pedido="routerLinkActive"
+        [activated]="pedido.isActive"
+        (click)="navegar.emit()"
+      >
+        <mat-icon matListItemIcon aria-hidden="true">shopping_cart</mat-icon>
+        <span matListItemTitle>Mi pedido ({{ carrito.unidades() }})</span>
+      </a>
+
+      <mat-divider />
+
+      <button mat-list-item type="button" (click)="salir()">
+        <mat-icon matListItemIcon aria-hidden="true">logout</mat-icon>
+        <span matListItemTitle>Salir</span>
+      </button>
+    } @else {
+      <mat-divider />
+
+      <a
+        mat-list-item
+        routerLink="/ingresar"
+        routerLinkActive
+        #ingresar="routerLinkActive"
+        [activated]="ingresar.isActive"
+        (click)="navegar.emit()"
+      >
+        <mat-icon matListItemIcon aria-hidden="true">login</mat-icon>
+        <span matListItemTitle>Ingresar</span>
+      </a>
+    }
+  </mat-nav-list>
+</nav>
