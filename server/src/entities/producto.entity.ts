@@ -14,9 +14,6 @@ export class Producto {
   @Column({ type: 'text' })
   descripcion: string;
 
-  @Column({ type: 'varchar', length: 80 })
-  clasificacion: string;
-
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   precio: number;
 

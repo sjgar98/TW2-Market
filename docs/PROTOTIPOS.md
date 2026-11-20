@@ -53,7 +53,7 @@ Dos pantallas:
 
 ### 4. Listado de productos
 
-Buscador por nombre, filtro por clasificación y grilla de cards con nombre, clasificación, descripción y precio. Cada card tiene "Ver detalle" y "Agregar" al carrito, este último deshabilitado y con la leyenda "Sin stock" si no hay unidades. Con pocas unidades, se avisa "Últimas N unidades". Paginado de 6 productos por página.
+Buscador por nombre, filtro por marca y grilla de cards con nombre, descripción y precio. Cada card tiene "Ver detalle" y "Agregar" al carrito, este último deshabilitado y con la leyenda "Sin stock" si no hay unidades. Con pocas unidades, se avisa "Últimas N unidades". Paginado de 6 productos por página.
 
 ![Listado de productos](prototipos/04-productos.png)
 
@@ -69,7 +69,7 @@ En celular las cards pasan a una columna y los links de la barra pasan a un men�
 
 ### 5. Detalle de producto
 
-Nombre, clasificación, descripción, precio y stock disponible, con selector de cantidad (de 1 al stock disponible) y "Agregar al carrito". Sin stock, se muestra "Sin stock" y el botón queda deshabilitado. Si el producto no existe, se muestra "Producto no encontrado" con un link al listado. Al agregar, un snackbar confirma la acción y ofrece "Ver carrito":
+Nombre, descripción, precio y stock disponible, con selector de cantidad (de 1 al stock disponible) y "Agregar al carrito". Sin stock, se muestra "Sin stock" y el botón queda deshabilitado. Si el producto no existe, se muestra "Producto no encontrado" con un link al listado. Al agregar, un snackbar confirma la acción y ofrece "Ver carrito":
 
 ![Detalle de producto](prototipos/05-detalle-producto.png)
 
@@ -95,7 +95,7 @@ En celular, una card por ítem y el resumen debajo:
 
 ### 7. Cargar producto (opcional)
 
-Nombre, descripción (con contador de caracteres), clasificación, precio (> 0) y stock (entero ≥ 0). Solo para administradores. Cada campo muestra su error, y "Guardar" queda deshabilitado mientras haya errores. Al guardar, se muestra un snackbar y se navega al detalle del producto creado.
+Nombre, marca, descripción (con contador de caracteres), precio (> 0), stock (entero ≥ 0) y especificaciones técnicas. No se asigna una gama al teléfono. Solo para administradores. Cada campo muestra su error, y "Guardar" queda deshabilitado mientras haya errores. Al guardar, se muestra un snackbar y se navega al detalle del producto creado.
 
 ![Cargar producto](prototipos/07-cargar-producto.png)
 

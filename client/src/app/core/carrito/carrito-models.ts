@@ -1,7 +1,6 @@
 export interface ItemCarrito {
   productoId: string;
   nombre: string;
-  clasificacion: string;
   precio: number;
   stock: number;
   cantidad: number;

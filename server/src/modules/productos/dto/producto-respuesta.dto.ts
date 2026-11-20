@@ -3,7 +3,6 @@ export class ProductoRespuestaDto {
   nombre: string;
   marca: string;
   descripcion: string;
-  clasificacion: string;
   precio: number;
   stock: number;
   disponible: boolean;
@@ -15,7 +14,7 @@ export class ProductoRespuestaDto {
   camara: string;
 
   constructor(producto: {
-    id: string; nombre: string; marca: string; descripcion: string; clasificacion: string;
+    id: string; nombre: string; marca: string; descripcion: string;
     precio: number; stock: number; imagenUrl: string; pantalla: string;
     almacenamientoGb: number; ramGb: number; bateriaMah: number; camara: string;
   }) {
@@ -23,7 +22,6 @@ export class ProductoRespuestaDto {
     this.nombre = producto.nombre;
     this.marca = producto.marca;
     this.descripcion = producto.descripcion;
-    this.clasificacion = producto.clasificacion;
     this.precio = Number(producto.precio);
     this.stock = producto.stock;
     this.disponible = producto.stock > 0;

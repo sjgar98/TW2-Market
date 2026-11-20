@@ -3,7 +3,6 @@ export interface Producto {
   nombre: string;
   marca: string;
   descripcion: string;
-  clasificacion: string;
   precio: number;
   stock: number;
   disponible: boolean;
@@ -26,7 +25,6 @@ export interface CrearProductoPayload {
   nombre: string;
   marca: string;
   descripcion: string;
-  clasificacion: string;
   precio: number;
   stock: number;
   imagenUrl?: string;
