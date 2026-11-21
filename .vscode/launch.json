@@ -1,0 +1,33 @@
+{
+  // Ejecutar y depurar (F5): elegir "Frontend + Backend" para levantar todo junto.
+  // El backend necesita server/.env (copiar server/.env.example y completar JWT_SECRET).
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Backend (NestJS)",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run start:dev",
+      "cwd": "${workspaceFolder}/server"
+    },
+    {
+      "name": "Frontend (Angular)",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "node ../.vscode/esperar-backend.mjs && npm start",
+      "cwd": "${workspaceFolder}/client",
+      "serverReadyAction": {
+        "pattern": "Local:\\s+(https?://\\S+)",
+        "uriFormat": "%s",
+        "action": "openExternally"
+      }
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Frontend + Backend",
+      "configurations": ["Backend (NestJS)", "Frontend (Angular)"],
+      "stopAll": true
+    }
+  ]
+}
